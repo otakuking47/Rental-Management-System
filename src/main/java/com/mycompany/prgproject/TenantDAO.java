@@ -1,6 +1,6 @@
-package dao;
+package main.java.com.mycompany.prgproject;
 
-import model.TenantManage;
+import main.java.com.mycompany.prgproject.TenantManage;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

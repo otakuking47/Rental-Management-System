@@ -1,4 +1,4 @@
-package model;
+package main.java.com.mycompany.prgproject;
 
 public class LeaseManage {
     private int leaseID;

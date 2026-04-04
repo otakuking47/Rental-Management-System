@@ -1,7 +1,7 @@
-package gui;
+package main.java.com.mycompany.prgproject;
 
-import dao.TenantDAO;
-import model.TenantManage;
+import main.java.com.mycompany.prgproject.TenantDAO;
+import main.java.com.mycompany.prgproject.TenantManage;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;

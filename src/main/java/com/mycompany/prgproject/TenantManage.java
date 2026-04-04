@@ -1,5 +1,6 @@
-package model;
+package main.java.com.mycompany.prgproject;
 
+import main.java.com.mycompany.prgproject.LeaseManage;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package model;
+package main.java.com.mycompany.prgproject;
 
 public class User {
     private String username;
