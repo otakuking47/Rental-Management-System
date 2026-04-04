@@ -18,12 +18,12 @@ public class paymentManage {
     private static final String PASSWORD = "password";
 
     // Default constructor 
-    public PaymentManage() {
+    public paymentManage() {
         this.status = "Pending";
         this.isPartial = false;
     }
 
-    public PaymentManage(int receipt, boolean isPartial, double amount,
+    public paymentManage(int receipt, boolean isPartial, double amount,
                          String paymentDate, String status, LeaseManage lease) {
         this.receipt = receipt;
         this.isPartial = isPartial;
