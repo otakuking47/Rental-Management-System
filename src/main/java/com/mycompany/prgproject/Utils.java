@@ -1,4 +1,4 @@
-package collin.weyulu.propertymanagemt;
+package com.mycompany.prgproject;
 
 import java.security.MessageDigest;
 import javax.swing.JOptionPane;

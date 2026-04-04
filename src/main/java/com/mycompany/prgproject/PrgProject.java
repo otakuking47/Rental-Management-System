@@ -2,11 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
+package com.mycompany.prgproject;
+
 /**
  *
- * @author Collin
+ * @author amute
  */
-public class James_property_management {
+public class PrgProject {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");

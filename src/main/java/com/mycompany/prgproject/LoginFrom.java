@@ -1,4 +1,4 @@
-package collin.weyulu.propertymanagemt;
+package com.mycompany.prgproject;
 
 import java.sql.*;
 import javax.swing.JOptionPane;
@@ -96,7 +96,8 @@ public class LoginFrom extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String url = "jdbc:mysql://localhost:3306/PropertyManagement", user = "root", pass = "toor", userText, passText, passHash, storedPass = null;
+        String url = "jdbc:mysql://localhost:3306/<ADD DATABASE HERE>",
+                user = "root", pass = "toor", userText, passText, passHash, storedPass = null;
 
         userText = userField.getText();
         passText = passwordField.getText();
