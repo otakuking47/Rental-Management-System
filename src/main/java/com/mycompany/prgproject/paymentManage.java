@@ -12,7 +12,7 @@ public class paymentManage {
     private double amount;
     private String paymentDate;
     private String status;
-    private LeaseManage lease;
+    private Lease lease;
 
     // Database credentials (EDIT THESE)
     private static final String URL = "jdbc:mysql://localhost:3306/your_db";
@@ -26,7 +26,7 @@ public class paymentManage {
     }
 
     public paymentManage(int receipt, boolean isPartial, double amount,
-                         String paymentDate, String status, LeaseManage lease) {
+                         String paymentDate, String status, Lease lease) {
         this.receipt = receipt;
         this.isPartial = isPartial;
         this.amount = amount;
@@ -142,11 +142,11 @@ public class paymentManage {
         this.status = status;
     }
 
-    public LeaseManage getLease() {
+    public Lease getLease() {
         return lease;
     }
 
-    public void setLease(LeaseManage lease) {
+    public void setLease(Lease lease) {
         this.lease = lease;
     }
 
