@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
-public class Apartment{
+public class Apartment extends Property{
       public static void validApartment(int unitNo,int floorLevel)
             throws IllegalArgumentException{
         if(unitNo <=0){
@@ -35,5 +35,10 @@ public class Apartment{
             System.out.println("Database Error: Could not add apartment.Please try again.");
         } 
         
+    }
+
+    @Override
+    public String getDetails() {
+        return "";
     }
 }

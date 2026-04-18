@@ -1,11 +1,11 @@
-package main.java.com.mycompany.prgproject;
+package com.mycompany.prgproject;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class paymentManage {
+public class Payment {
 
     private int receipt;
     private boolean isPartial;
@@ -20,12 +20,12 @@ public class paymentManage {
     private static final String PASSWORD = "password";
 
     // Default constructor 
-    public paymentManage() {
+    public Payment() {
         this.status = "Pending";
         this.isPartial = false;
     }
 
-    public paymentManage(int receipt, boolean isPartial, double amount,
+    public Payment(int receipt, boolean isPartial, double amount,
                          String paymentDate, String status, Lease lease) {
         this.receipt = receipt;
         this.isPartial = isPartial;

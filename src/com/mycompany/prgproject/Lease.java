@@ -1,4 +1,4 @@
-package main.java.com.mycompany.prgproject;
+package com.mycompany.prgproject;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
