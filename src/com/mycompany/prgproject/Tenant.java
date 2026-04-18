@@ -1,19 +1,21 @@
-package com.mycompany.prgproject;
+package model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tenant {
+public class TenantManage {
 
+   
     private String firstName;
     private String lastName;
-    private int credential;
+    private int credential;          // ID / Passport Number
     private int phoneNumber;
     private String email;
-    private String status;
+    private String status;           // "Active"  "Blacklisted"
     private List<LeaseManage> leaseHistory;
 
-    public Tenant(String firstName, String lastName, int credential,
+    
+    public TenantManage(String firstName, String lastName, int credential,
                         int phoneNumber, String email, String status) {
         validateInput(firstName, lastName, email, status);
         this.firstName = firstName;
@@ -25,10 +27,11 @@ public class Tenant {
         this.leaseHistory = new ArrayList<>();
     }
 
+   
     private void validateInput(String firstName, String lastName, String email, String status) {
-        if (firstName == null || firstName.trim().isEmpty() ||
+        if (firstName == null || firstName.trim().isEmpty() || 
             lastName == null || lastName.trim().isEmpty()) {
-            throw new IllegalArgumentException("First and last name cannot be empty.");
+            throw new IllegalArgumentException("First name and last name cannot be empty.");
         }
         if (email == null || !email.contains("@")) {
             throw new IllegalArgumentException("Invalid email address.");
@@ -38,7 +41,7 @@ public class Tenant {
         }
     }
 
-    // Getters and Setters
+    // ==================== Getters & Setters ====================
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
@@ -58,9 +61,10 @@ public class Tenant {
     public void setStatus(String status) { this.status = status; }
 
     public List<LeaseManage> getLeaseHistory() {
-        return new ArrayList<>(leaseHistory);
+        return new ArrayList<>(leaseHistory);  
     }
 
+    
     public void updateDetail(String firstName, String lastName, int phoneNumber,
                              String email, String status) {
         validateInput(firstName, lastName, email, status);
@@ -69,16 +73,18 @@ public class Tenant {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.status = status;
-        System.out.println("✅ Tenant details updated successfully.");
+        System.out.println(" Tenant details updated successfully.");
     }
 
     public void removeTenet() {
-        System.out.println("🗑️ Tenant " + firstName + " " + lastName + " removed.");
+        System.out.println(" Tenant " + firstName + " " + lastName + " has been removed.");
         leaseHistory.clear();
     }
 
     public String getHistory() {
-        if (leaseHistory.isEmpty()) return "No lease history.";
+        if (leaseHistory.isEmpty()) {
+            return "No lease history available for this tenant.";
+        }
         StringBuilder sb = new StringBuilder("=== Lease History for " + firstName + " " + lastName + " ===\n");
         for (LeaseManage lease : leaseHistory) {
             sb.append(lease.getDetail()).append("\n");
@@ -87,12 +93,34 @@ public class Tenant {
     }
 
     public void addLease(LeaseManage lease) {
-        if (lease != null) leaseHistory.add(lease);
+        if (lease != null) {
+            leaseHistory.add(lease);
+        }
     }
 
     @Override
     public String toString() {
-        return String.format("Tenant: %s %s | ID: %d | Phone: %d | Email: %s | Status: %s | Leases: %d",
-                firstName, lastName, credential, phoneNumber, email, status, leaseHistory.size());
+        return firstName + " " + lastName + " (ID: " + credential + ", Status: " + status + ")";
+    }
+
+    /**
+     * LeaseManage 
+     */
+    public static class LeaseManage {
+        private int leaseID;
+        private String startDate;
+        private String endDate;
+        private double rentAmount;
+
+        public LeaseManage(int leaseID, String startDate, String endDate, double rentAmount) {
+            this.leaseID = leaseID;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.rentAmount = rentAmount;
+        }
+
+        public String getDetail() {
+            return "Lease #" + leaseID + " | " + startDate + " to " + endDate + " | Rent: N$" + rentAmount;
+        }
     }
 }
