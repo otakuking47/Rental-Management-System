@@ -1,20 +1,34 @@
 package model;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TenantManage {
 
-   
+
     private String firstName;
     private String lastName;
-    private int credential;          // ID / Passport Number
+    private int credential;
     private int phoneNumber;
     private String email;
-    private String status;           // "Active"  "Blacklisted"
+    private String status;
     private List<LeaseManage> leaseHistory;
 
-    
+
+    private static final String URL = "jdbc:mysql://localhost:3306/james_rental";
+    private static final String USER = "root";
+    private static final String PASS = "";
+
+    static {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            System.out.println(" MySQL Driver loaded successfully!");
+        } catch (ClassNotFoundException e) {
+            System.err.println(" MySQL Driver not found!");
+        }
+    }
+
     public TenantManage(String firstName, String lastName, int credential,
                         int phoneNumber, String email, String status) {
         validateInput(firstName, lastName, email, status);
@@ -27,10 +41,8 @@ public class TenantManage {
         this.leaseHistory = new ArrayList<>();
     }
 
-   
     private void validateInput(String firstName, String lastName, String email, String status) {
-        if (firstName == null || firstName.trim().isEmpty() || 
-            lastName == null || lastName.trim().isEmpty()) {
+        if (firstName == null || firstName.trim().isEmpty() || lastName == null || lastName.trim().isEmpty()) {
             throw new IllegalArgumentException("First name and last name cannot be empty.");
         }
         if (email == null || !email.contains("@")) {
@@ -61,10 +73,9 @@ public class TenantManage {
     public void setStatus(String status) { this.status = status; }
 
     public List<LeaseManage> getLeaseHistory() {
-        return new ArrayList<>(leaseHistory);  
+        return new ArrayList<>(leaseHistory);
     }
 
-    
     public void updateDetail(String firstName, String lastName, int phoneNumber,
                              String email, String status) {
         validateInput(firstName, lastName, email, status);
@@ -73,18 +84,15 @@ public class TenantManage {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.status = status;
-        System.out.println(" Tenant details updated successfully.");
     }
 
     public void removeTenet() {
-        System.out.println(" Tenant " + firstName + " " + lastName + " has been removed.");
+        System.out.println(" Tenant " + firstName + " " + lastName + " removed.");
         leaseHistory.clear();
     }
 
     public String getHistory() {
-        if (leaseHistory.isEmpty()) {
-            return "No lease history available for this tenant.";
-        }
+        if (leaseHistory.isEmpty()) return "No lease history available.";
         StringBuilder sb = new StringBuilder("=== Lease History for " + firstName + " " + lastName + " ===\n");
         for (LeaseManage lease : leaseHistory) {
             sb.append(lease.getDetail()).append("\n");
@@ -93,8 +101,54 @@ public class TenantManage {
     }
 
     public void addLease(LeaseManage lease) {
-        if (lease != null) {
-            leaseHistory.add(lease);
+        if (lease != null) leaseHistory.add(lease);
+    }
+
+    public void addTenant() {
+        String sql = "INSERT INTO tenant (credential, firstName, lastName, phoneNumber, email, status) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, credential);
+            ps.setString(2, firstName);
+            ps.setString(3, lastName);
+            ps.setInt(4, phoneNumber);
+            ps.setString(5, email);
+            ps.setString(6, status);
+
+            ps.executeUpdate();
+            System.out.println(" Tenant added successfully! ID: " + credential);
+
+        } catch (SQLException e) {
+            System.err.println(" Add failed: " + e.getMessage());
+        }
+    }
+
+    public void updateTenant() {
+        String sql = "UPDATE tenant SET firstName=?, lastName=?, phoneNumber=?, email=?, status=? "
+                   + "WHERE credential=?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, firstName);
+            ps.setString(2, lastName);
+            ps.setInt(3, phoneNumber);
+            ps.setString(4, email);
+            ps.setString(5, status);
+            ps.setInt(6, credential);
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                System.out.println(" Tenant updated successfully! ID: " + credential);
+            } else {
+                System.out.println(" No tenant found with ID: " + credential);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(" Update failed: " + e.getMessage());
         }
     }
 
@@ -103,9 +157,6 @@ public class TenantManage {
         return firstName + " " + lastName + " (ID: " + credential + ", Status: " + status + ")";
     }
 
-    /**
-     * LeaseManage 
-     */
     public static class LeaseManage {
         private int leaseID;
         private String startDate;
@@ -122,5 +173,13 @@ public class TenantManage {
         public String getDetail() {
             return "Lease #" + leaseID + " | " + startDate + " to " + endDate + " | Rent: N$" + rentAmount;
         }
+    }
+
+
+    public static void main(String[] args) {
+
+        TenantManage t1 = new TenantManage("Seele", "Vol", 47973, 812345678, "seele@example.com", "Active");
+        t1.addTenant();
+        t1.updateTenant();
     }
 }
