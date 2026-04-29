@@ -1,4 +1,4 @@
-package com.mycompany.prgproject;
+package prgproject.model;
 
 
 public class House extends Property {

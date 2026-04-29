@@ -1,9 +1,9 @@
-package com.mycompany.prgproject;
+package prgproject.utils;
 
 import java.security.MessageDigest;
 import javax.swing.JOptionPane;
 
-public class Utils {
+public class Hasher {
     public static String hashPassword(String password){
         try{
             MessageDigest md = MessageDigest.getInstance("SHA-256");

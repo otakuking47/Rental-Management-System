@@ -1,7 +1,7 @@
-package com.mycompany.prgproject;
+package prgproject.ui;
 
-import java.sql.*;
 import javax.swing.JOptionPane;
+import prgproject.DAO.AdminDao;
 
 /**
  *
@@ -96,39 +96,17 @@ public class LoginFrom extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String url = "jdbc:mysql://localhost:3306/<ADD DATABASE HERE>",
-                user = "root", pass = "toor", userText, passText, passHash, storedPass = null;
+        String userText = userField.getText();
+        String passText = passwordField.getText();
 
-        userText = userField.getText();
-        passText = passwordField.getText();
+        boolean vaild = AdminDao.authenticate(userText, passText);
 
-        if (passText.isEmpty() || userText.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "missing values in field", "Missing", JOptionPane.WARNING_MESSAGE);
+        if (vaild) {
+            JOptionPane.showMessageDialog(null, "Access Granted");
         } else {
-
-            passHash = Utils.hashPassword(passText);
-
-            String sql = "SELECT passwordHash FROM admin WHERE username = ?";
-
-            try (Connection con = DriverManager.getConnection(url, user, pass); PreparedStatement pstmt = con.prepareStatement(sql)) {
-                pstmt.setString(1, userText);
-
-                ResultSet rs = pstmt.executeQuery();
-
-                while (rs.next()) {
-                    storedPass = rs.getString("passwordHash");
-                }
-
-                if (passHash.equals(storedPass)) {
-                    JOptionPane.showMessageDialog(null, "Access Granted");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Access Denied");
-                }
-
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(rootPane, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(null, "Access Denied");
         }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
