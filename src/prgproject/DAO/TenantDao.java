@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import prgproject.model.Tenant;
 import prgproject.utils.DBConnection;
 
@@ -26,9 +25,7 @@ public class TenantDao {
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<Tenant> townHouseList = new ArrayList<>();
-            if (!rs.next()) {
-                return null; // No record found
-            } else {
+            
                 while (rs.next()) {
                     Tenant tenant = new Tenant(
                             rs.getString("firstName"),
@@ -41,17 +38,15 @@ public class TenantDao {
 
                     townHouseList.add(tenant);
                 }
-            }
-
+       
             return townHouseList;
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to get all records from Tenants due to ", e);
         }
-        return null;
     }
 
-    public void saveTenant(Tenant tenant) {
+    public int saveTenant(Tenant tenant) {
         String sql = "INSERT INTO tenants (credential, firstName, lastName, phoneNumber, email, status) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -64,14 +59,14 @@ public class TenantDao {
             ps.setString(5, tenant.getEmail());
             ps.setString(6, tenant.getStatus());
 
-            ps.executeUpdate();
+            return ps.executeUpdate();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to save to Tenant of ID: " + tenant.getCredential() + "due to ", e);
         }
     }
 
-    public void updateTenant(Tenant tenant) {
+    public int updateTenant(Tenant tenant) {
         String sql = "UPDATE tenants SET firstName=?, lastName=?, phoneNumber=?, email=?, status=? "
                 + "WHERE credential=?";
 
@@ -84,28 +79,24 @@ public class TenantDao {
             ps.setString(5, tenant.getStatus());
             ps.setInt(6, tenant.getCredential());
 
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                JOptionPane.showMessageDialog(null, " Tenant updated successfully! ", "Success", JOptionPane.INFORMATION_MESSAGE); // this could be useful
-            } else {
-                JOptionPane.showMessageDialog(null, " No tenant found", "Fail to Update", JOptionPane.ERROR_MESSAGE);
-            }
+            return ps.executeUpdate();
+            
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild update record ID: " + tenant.getCredential() + " due to ", e);
         }
     }
 
-    //deletes a Tenant
-    public void deleteTenant(Tenant tenant) {
+    public int deleteTenant(int credential) {
         String sql = "DELETE FROM tenants WHERE credential = ?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, tenant.getCredential());
-            ps.executeUpdate();
+            ps.setInt(1, credential);
+            
+            return ps.executeUpdate();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to delete ID: " + credential + " due to ", e);
         }
     }
 }

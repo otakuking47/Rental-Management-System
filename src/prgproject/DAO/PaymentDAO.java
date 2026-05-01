@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import prgproject.model.Payment;
 import prgproject.utils.DBConnection;
 
@@ -26,9 +25,7 @@ public class PaymentDAO {
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<Payment> paymentList = new ArrayList<>();
-            if (!rs.next()) {
-                return null; // No record found
-            } else {
+            
                 while (rs.next()) {
                     Payment payment = new Payment(
                             rs.getInt("receipt"),
@@ -41,18 +38,17 @@ public class PaymentDAO {
 
                     paymentList.add(payment);
                 }
-            }
             
             return paymentList;
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to load all payments due to ", e);
         }
-        return null;
+        
     }
 
 // saves this Payment to the database
-    public void savePayment(Payment payment) {
+    public int savePayment(Payment payment) {
         
         String sql = "INSERT INTO payments (receipt, is_partial, amount, payment_date, status, lease_id) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -66,16 +62,16 @@ public class PaymentDAO {
             ps.setString(5, payment.getStatus());
             ps.setInt(6, payment.getLeaseID());
 
-            ps.executeUpdate();
+            return ps.executeUpdate();
             
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to save payment: " + payment.getReceipt() + " due to ", e);
         }
     }
 
 // updates a specific Payment
-    public void updatePayment(Payment payment) {
+    public int updatePayment(Payment payment) {
         String sql = "UPDATE payments "
                 + " isPartial = ?, amount = ?, "
                 + " paymentDate = ?, status = ?, leaseID = ?"
@@ -90,22 +86,24 @@ public class PaymentDAO {
             ps.setInt(5, payment.getLeaseID());
             ps.setInt(6, payment.getReceipt());
             
-            ps.executeUpdate();
+            return ps.executeUpdate();
+            
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to update payment:" + payment.getReceipt() + " due to ", e);
         }
     }
 
     //deletes a Payment
-    public void deletePayment(Payment payment) {
+    public int deletePayment(int receipt) {
         String sql = "DELETE FROM payments WHERE receipt =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, payment.getReceipt());
-            ps.executeUpdate();
+            ps.setInt(1, receipt);
+            
+            return ps.executeUpdate();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to delete payment: " + receipt + " due to ", e);
         }
     }
 

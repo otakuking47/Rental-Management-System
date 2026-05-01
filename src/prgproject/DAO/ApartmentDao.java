@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import prgproject.model.Apartment;
 import prgproject.utils.DBConnection;
 
@@ -51,13 +50,12 @@ public class ApartmentDao {
             return townHouseList;
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to load all apartments due to ", e);
         }
-        return null;
     }
 
 // saves this Apartment to the database
-    public void saveApartment(Apartment apartment) {
+    public int saveApartment(Apartment apartment) {
         String sql = "INSERT INTO apartments "
                 + "(ID, unit_no, backyard, floor_size, full_address, "
                 + "location, market_value, rental_cost, availability, floor_level, elevator) "
@@ -76,15 +74,15 @@ public class ApartmentDao {
             ps.setInt(10, apartment.getFloorLevel());
             ps.setBoolean(11, apartment.isHasElevator());
 
-            ps.executeUpdate();
+            return ps.executeUpdate();
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to save record id: " + apartment.getID() + " due to ", e);
         }
     }
 
 // updates a specific Townhouse
-    public void updateApartment(Apartment apartment) {
+    public int updateApartment(Apartment apartment) {
         String sql = "UPDATE apartments "
                 + "unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
                 + "location = ?, market_value = ?, rental_cost = ?, availability = ?, floor_level = ?, elevator = ?"
@@ -105,22 +103,23 @@ public class ApartmentDao {
             ps.setBoolean(10, apartment.isHasElevator());
             ps.setInt(11, apartment.getID());
 
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild update record id: " + apartment.getID() + " due to ", e);
         }
     }
 
     //deletes a Apartment
-    public void deleteApartment(Apartment apartment) {
+    public int deleteApartment(int id) {
         String sql = "DELETE FROM apartments WHERE ID =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, apartment.getID());
-            ps.executeUpdate();
+            ps.setInt(1, id);
+            
+            return ps.executeUpdate();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to delete apartment: " + id + " due to ", e);
         }
     }
 }

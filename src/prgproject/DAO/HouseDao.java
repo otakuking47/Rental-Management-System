@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import prgproject.model.House;
 import prgproject.utils.DBConnection;
 
@@ -25,9 +24,7 @@ public class HouseDao {
         
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<House> houseList = new ArrayList<>();
-            if (!rs.next()) {
-                return null; // No record found
-            } else {
+            
                 while (rs.next()) {
                     House house = new House(
                             rs.getInt("ID"),
@@ -42,18 +39,17 @@ public class HouseDao {
 
                     houseList.add(house);
                 }
-            }
+            
             
             return houseList;
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to load all from house due to ", e);
         }
-        return null;
     }
 
 // saves this House to the database
-    public void saveHouse(House house) {
+    public int saveHouse(House house) {
         String sql = "INSERT INTO houses "
                 + "(ID, floor_size, full_address, "
                 + "location, market_value, rental_cost, availability, plot_size) "
@@ -69,14 +65,15 @@ public class HouseDao {
             ps.setBoolean(7, house.isAvailability());
             ps.setDouble(8, house.getPlotSize());
             
-            ps.executeUpdate();
+            return ps.executeUpdate();
+            
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to save house id: " + house.getID() + " due to " , e);
         }
     }
     
 // updates a specific Townhouse
-    public void updateHouse(House house) {
+    public int updateHouse(House house) {
         String sql = "UPDATE houses "
                 + "floor_size = ?, full_address = ?, "
                 + "location = ?, market_value = ?, rental_cost = ?, availability = ?, plot_size = ? "
@@ -93,22 +90,24 @@ public class HouseDao {
             ps.setDouble(7, house.getPlotSize());
             ps.setInt(8, house.getID());
 
-            ps.executeUpdate();
+            return ps.executeUpdate();
+            
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to update house: " + house.getID() + " due to " , e);
         }
     }
     
     //deletes a House
-    public void deleteHouse(House house){
+    public int deleteHouse(int id){
         String sql = "DELETE FROM houses WHERE ID =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)){
             
-            ps.setInt(1, house.getID());
-            ps.executeUpdate();
+            ps.setInt(1, id);
+            
+            return ps.executeUpdate();
             
         }catch( SQLException e){
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                throw new RuntimeException("Faild to delete house: " + id + " due to " , e);
         }
     }
     

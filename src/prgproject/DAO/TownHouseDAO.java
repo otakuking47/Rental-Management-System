@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import prgproject.model.TownHouse;
 import prgproject.utils.DBConnection;
 
@@ -18,48 +17,42 @@ import prgproject.utils.DBConnection;
  *
  * @author Collin
  */
-
 // Loads a TownHouse from the database using its ID.
 // Returns null if no matching record is found.
 public class TownHouseDAO {
 
     public List<TownHouse> getAllTownHouses() {
-        
+
         String sql = "SELECT * FROM townhouses";
-        
+
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<TownHouse> townHouseList = new ArrayList<>();
-            if (!rs.next()) {
-                return null; // No record found
-            } else {
-                while (rs.next()) {
-                    TownHouse townhouse = new TownHouse(
-                            rs.getInt("ID"),
-                            rs.getString("floor_size"),
-                            rs.getString("full_address"),
-                            rs.getString("location"),
-                            rs.getDouble("market_value"),
-                            rs.getDouble("rental_cost"),
-                            rs.getBoolean("availability"),
-                            rs.getInt("unit_no"),
-                            rs.getBoolean("backyard")
-                    );
 
-                    townHouseList.add(townhouse);
-                }
+            while (rs.next()) {
+                TownHouse townhouse = new TownHouse(
+                        rs.getInt("ID"),
+                        rs.getString("floor_size"),
+                        rs.getString("full_address"),
+                        rs.getString("location"),
+                        rs.getDouble("market_value"),
+                        rs.getDouble("rental_cost"),
+                        rs.getBoolean("availability"),
+                        rs.getInt("unit_no"),
+                        rs.getBoolean("backyard")
+                );
+
+                townHouseList.add(townhouse);
             }
-            
-            
+
             return townHouseList;
-            
+
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to fetch all records from townHouse due to: ", e);
         }
-        return null;
     }
 
 // saves this TownHouse to the database
-    public void saveTownHouse(TownHouse t) {
+    public int saveTownHouse(TownHouse t) {
         String sql = "INSERT INTO townhouses "
                 + "(ID, unit_no, backyard, floor_size, full_address, "
                 + "location, market_value, rental_cost, availability) "
@@ -77,15 +70,15 @@ public class TownHouseDAO {
             ps.setDouble(8, t.getRentalCost());
 
             ps.setBoolean(9, t.isAvailability());
-            ps.executeUpdate();
-            
+            return ps.executeUpdate();
+
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild to save record to townHouse due to: ", e);
         }
     }
-    
+
 // updates a specific Townhouse
-    public void updateTownHouse(TownHouse t) {
+    public int updateTownHouse(TownHouse t) {
         String sql = "UPDATE townhouses "
                 + "unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
                 + "location = ?, market_value = ?, rental_cost = ?, availability = ? "
@@ -104,22 +97,22 @@ public class TownHouseDAO {
             ps.setBoolean(8, t.isAvailability());
             ps.setInt(9, t.getID());
 
-            ps.executeUpdate();
+            return ps.executeUpdate();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            throw new RuntimeException("Faild ro update record ID:" + t.getID() + " due to ", e);
         }
     }
-    
+
     //deletes a TownHouse
-    public void deleteTownHouse(TownHouse t){
+    public int deleteTownHouse(int id) {
         String sql = "DELETE FROM townhouse WHERE ID =?";
-        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)){
-            
-            ps.setInt(1, t.getID());
-            ps.executeUpdate();
-            
-        }catch( SQLException e){
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Faild to delete ID: " + id + " due to ", e);
         }
     }
 

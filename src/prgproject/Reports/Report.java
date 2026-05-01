@@ -9,5 +9,5 @@ package prgproject.Reports;
  * @author Collin
  */
 public interface Report {
-    String generate();  // thinking of a data structure here im so tierd 
+    String generate();
 }
