@@ -15,7 +15,7 @@ public class TenantService {
 
     // Retrieve all tenants
     public List<Tenant> getAllTenants() {
-
+       
         try {
             List<Tenant> tenants = tenantDao.getAllTenants();
 

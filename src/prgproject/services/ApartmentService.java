@@ -15,13 +15,21 @@ public class ApartmentService {
 
     // Get all apartments
     public List<Apartment> getAllApartments() {
-        List<Apartment> apartments = apartmentDao.getAllApartments();
+        try {
+            List<Apartment> apartments = apartmentDao.getAllApartments();
 
-        if (apartments == null || apartments.isEmpty()) {
-            throw new RuntimeException("No apartments found.");
+            if (apartments == null || apartments.isEmpty()) {
+                throw new RuntimeException("No apartments found.");
+            }
+
+            return apartments;
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to fetch apartments.", e);
+
+        } catch (Exception e) { 
+            throw new RuntimeException("Unexpected error while fetching apartments.", e);
         }
-
-        return apartments;
     }
 
     // Add new apartment
@@ -29,10 +37,18 @@ public class ApartmentService {
 
         validateApartment(apartment);
 
-        int result = apartmentDao.saveApartment(apartment);
+        try {
+            int result = apartmentDao.saveApartment(apartment);
 
-        if (result == 0) {
-            throw new RuntimeException("Failed to save apartment.");
+            if (result == 0) {
+                throw new RuntimeException("Failed to save apartment.");
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to save apartment.", e);
+
+        } catch (Exception e) { 
+            throw new RuntimeException("Unexpected error while saving apartment.", e);
         }
     }
 
@@ -41,10 +57,18 @@ public class ApartmentService {
 
         validateApartment(apartment);
 
-        int result = apartmentDao.updateApartment(apartment);
+        try {
+            int result = apartmentDao.updateApartment(apartment);
 
-        if (result == 0) {
-            throw new RuntimeException("Failed to update apartment with ID: " + apartment.getID());
+            if (result == 0) {
+                throw new RuntimeException("Failed to update apartment with ID: " + apartment.getID());
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to update apartment.", e);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while updating apartment.", e);
         }
     }
 
@@ -55,10 +79,18 @@ public class ApartmentService {
             throw new IllegalArgumentException("Invalid apartment ID.");
         }
 
-        int result = apartmentDao.deleteApartment(id);
+        try {
+            int result = apartmentDao.deleteApartment(id);
 
-        if (result == 0) {
-            throw new RuntimeException("Failed to delete apartment with ID: " + id);
+            if (result == 0) {
+                throw new RuntimeException("Failed to delete apartment with ID: " + id);
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to delete apartment.", e);
+
+        } catch (Exception e) { 
+            throw new RuntimeException("Unexpected error while deleting apartment.", e);
         }
     }
 
@@ -89,7 +121,7 @@ public class ApartmentService {
             throw new IllegalArgumentException("Rental cost cannot be negative.");
         }
 
-        if (apartment.getFloorLevel() < 0) 
-        throw new IllegalArgumentException("Floor level cannot be negative.");
-        }
+        if (apartment.getFloorLevel() < 0)
+            throw new IllegalArgumentException("Floor level cannot be negative.");
     }
+}
