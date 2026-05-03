@@ -16,13 +16,21 @@ public class TenantService {
     // Retrieve all tenants
     public List<Tenant> getAllTenants() {
 
-        List<Tenant> tenants = tenantDao.getAllTenants();
+        try {
+            List<Tenant> tenants = tenantDao.getAllTenants();
 
-        if (tenants == null || tenants.isEmpty()) {
-            throw new RuntimeException("No tenants found.");
+            if (tenants == null || tenants.isEmpty()) {
+                throw new RuntimeException("No tenants found.");
+            }
+
+            return tenants;
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to retrieve tenants.", e);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while retrieving tenants.", e);
         }
-
-        return tenants;
     }
 
     // Add new tenant
@@ -30,10 +38,18 @@ public class TenantService {
 
         validateTenant(tenant);
 
-        int result = tenantDao.saveTenant(tenant);
+        try {
+            int result = tenantDao.saveTenant(tenant);
 
-        if (result == 0) {
-            throw new RuntimeException("Failed to save tenant.");
+            if (result == 0) {
+                throw new RuntimeException("Failed to save tenant.");
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to save tenant.", e);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while saving tenant.", e);
         }
     }
 
@@ -42,10 +58,18 @@ public class TenantService {
 
         validateTenant(tenant);
 
-        int result = tenantDao.updateTenant(tenant);
+        try {
+            int result = tenantDao.updateTenant(tenant);
 
-        if (result == 0) {
-            throw new RuntimeException("Failed to update tenant with ID: " + tenant.getCredential());
+            if (result == 0) {
+                throw new RuntimeException("Failed to update tenant with ID: " + tenant.getCredential());
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to update tenant.", e);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while updating tenant.", e);
         }
     }
 
@@ -56,10 +80,18 @@ public class TenantService {
             throw new IllegalArgumentException("Invalid tenant credential.");
         }
 
-        int result = tenantDao.deleteTenant(credential);
+        try {
+            int result = tenantDao.deleteTenant(credential);
 
-        if (result == 0) {
-            throw new RuntimeException("Failed to delete tenant with ID: " + credential);
+            if (result == 0) {
+                throw new RuntimeException("Failed to delete tenant with ID: " + credential);
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Service error: Unable to delete tenant.", e);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while deleting tenant.", e);
         }
     }
 
