@@ -8,7 +8,7 @@ package prgproject.model;
  *
  * @author amute
  */
-public abstract class Property {
+public class Property {
 
     // Attributes
     private int ID;
@@ -19,6 +19,7 @@ public abstract class Property {
     private double marketValue;
     private double rentalCost;
     private boolean availability;
+    
     
     //constructor
     
@@ -37,7 +38,9 @@ public abstract class Property {
     }
 
     // method
-    public abstract String getDetails();
+    public String getDetails(){
+        return "";
+    };
 
     public void setRentalCost(double rentalCost) {
         this.rentalCost = rentalCost;
@@ -103,6 +106,5 @@ public abstract class Property {
     public boolean isAvailability() {
         return availability;
     }
-    
     
 }

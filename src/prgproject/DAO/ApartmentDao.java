@@ -24,30 +24,27 @@ public class ApartmentDao {
         String sql = "SELECT * FROM apartments";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
-            List<Apartment> townHouseList = new ArrayList<>();
-            if (!rs.next()) {
-                return null; // No record found
-            } else {
-                while (rs.next()) {
-                    Apartment apartment = new Apartment(
-                            rs.getInt("ID"),
-                            rs.getString("floor_size"),
-                            rs.getString("full_address"),
-                            rs.getString("location"),
-                            rs.getDouble("market_value"),
-                            rs.getDouble("rental_cost"),
-                            rs.getBoolean("availability"),
-                            rs.getInt("unit_no"),
-                            rs.getInt("floor_level"),
-                            rs.getBoolean("elevator"),
-                            rs.getBoolean("backyard")
-                    );
+            List<Apartment> apartmentList = new ArrayList<>();
 
-                    townHouseList.add(apartment);
-                }
+            while (rs.next()) {
+                Apartment apartment = new Apartment(
+                        rs.getInt("ID"),
+                        rs.getString("floor_size"),
+                        rs.getString("full_address"),
+                        rs.getString("location"),
+                        rs.getDouble("market_value"),
+                        rs.getDouble("rental_cost"),
+                        rs.getBoolean("availability"),
+                        rs.getInt("unit_no"),
+                        rs.getInt("floor_level"),
+                        rs.getBoolean("elevator"),
+                        rs.getBoolean("backyard")
+                );
+
+                apartmentList.add(apartment);
             }
-            
-            return townHouseList;
+
+            return apartmentList;
 
         } catch (SQLException e) {
             throw new RuntimeException("Faild to load all apartments due to ", e);
@@ -75,13 +72,13 @@ public class ApartmentDao {
             ps.setBoolean(11, apartment.isHasElevator());
 
             return ps.executeUpdate();
-            
+
         } catch (SQLException e) {
             throw new RuntimeException("Faild to save record id: " + apartment.getID() + " due to ", e);
         }
     }
 
-// updates a specific Townhouse
+// updates a specific apartment
     public int updateApartment(Apartment apartment) {
         String sql = "UPDATE apartments "
                 + "unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
@@ -115,11 +112,44 @@ public class ApartmentDao {
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            
+
             return ps.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException("Faild to delete apartment: " + id + " due to ", e);
+        }
+    }
+    
+    public Apartment getById(int id){
+        String sql = "SELECT * FROM apartments";
+
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
+            
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            Apartment apartment = null;
+             
+            while (rs.next()) {
+                
+                apartment = new Apartment(
+                        rs.getInt("ID"),
+                        rs.getString("floor_size"),
+                        rs.getString("full_address"),
+                        rs.getString("location"),
+                        rs.getDouble("market_value"),
+                        rs.getDouble("rental_cost"),
+                        rs.getBoolean("availability"),
+                        rs.getInt("unit_no"),
+                        rs.getInt("floor_level"),
+                        rs.getBoolean("elevator"),
+                        rs.getBoolean("backyard")
+                );
+            }
+
+            return apartment;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Faild to load all apartments due to ", e);
         }
     }
 }

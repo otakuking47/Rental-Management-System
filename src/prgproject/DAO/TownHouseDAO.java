@@ -13,10 +13,6 @@ import java.util.List;
 import prgproject.model.TownHouse;
 import prgproject.utils.DBConnection;
 
-/**
- *
- * @author Collin
- */
 // Loads a TownHouse from the database using its ID.
 // Returns null if no matching record is found.
 public class TownHouseDAO {
@@ -115,5 +111,32 @@ public class TownHouseDAO {
             throw new RuntimeException("Faild to delete ID: " + id + " due to ", e);
         }
     }
+    
+    public TownHouse getById(int id){
+        String sql = "SELECT * FROM townhouses WHERE ID = ?";
 
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
+            TownHouse townhouse = null;
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                townhouse = new TownHouse(
+                        rs.getInt("ID"),
+                        rs.getString("floor_size"),
+                        rs.getString("full_address"),
+                        rs.getString("location"),
+                        rs.getDouble("market_value"),
+                        rs.getDouble("rental_cost"),
+                        rs.getBoolean("availability"),
+                        rs.getInt("unit_no"),
+                        rs.getBoolean("backyard")
+                );
+            }
+
+            return townhouse;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Faild to fetch all records from townHouse due to: ", e);
+        }
+    }
 }

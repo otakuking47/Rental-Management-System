@@ -13,10 +13,6 @@ import java.util.List;
 import prgproject.model.Payment;
 import prgproject.utils.DBConnection;
 
-/**
- *
- * @author Collin
- */
 public class PaymentDAO {
 
     public List<Payment> getAllPayments() {

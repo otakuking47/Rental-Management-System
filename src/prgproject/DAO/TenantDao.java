@@ -13,10 +13,7 @@ import java.util.List;
 import prgproject.model.Tenant;
 import prgproject.utils.DBConnection;
 
-/**
- *
- * @author Collin
- */
+
 public class TenantDao {
 
     public List<Tenant> getAllTenants() {

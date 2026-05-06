@@ -1,10 +1,5 @@
 package prgproject.model;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 // A TownHouse is a Property with a unit number and optional backyard
 public class TownHouse extends Property {
 

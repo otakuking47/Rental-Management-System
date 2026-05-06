@@ -1,40 +1,89 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package prgproject.services;
 
-/**
- *
- * @author Collin
- */
-public class LeaseService extends prgproject.DAO.LeaseDao{
-    public static int validLease(double rentAmount, double securityDeposit, double latePenaltyRate, int gracePeriod, LocalDate startDate, LocalDate endDate)
-            throws IllegalArgumentException {
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
+import prgproject.model.*;
+import prgproject.DAO.LeaseDao;
+import prgproject.DAO.*;
 
-        if (rentAmount <= 0) {
-            JOptionPane.showMessageDialog(null, "Rent amount must be greater than 0", "ERROR", JOptionPane.ERROR_MESSAGE);
+public class LeaseService {
 
+    LeaseDao leaseDb = new LeaseDao();
+    PropertyDao propertyDb = new PropertyDao();
+
+    public void createLease(Lease lease) {
+
+        
+        Property property = propertyDb.getById(lease.getPropertyID());
+        
+        if (!property.isAvailability()) {
+            throw new IllegalArgumentException("Property already occupied");
         }
-        if (securityDeposit < 0) {
-            JOptionPane.showMessageDialog(null, "Security deposit cannot be negative", "ERROR", JOptionPane.ERROR_MESSAGE);
-
+        
+        if (leaseDb.existsActiveLease(lease.getLeaseID())) {
+            throw new IllegalArgumentException("Property already has an active lease");
         }
-        if (latePenaltyRate < 0) {
-            JOptionPane.showMessageDialog(null, "Late penalty rate cannot be negative", "ERROR", JOptionPane.ERROR_MESSAGE);
+        
+        lease.setIsActive(true);
 
+        leaseDb.saveLease(lease);
+        
+        property.setAvailability(false);
+        propertyDb.updateProperty(property);
+    }
+
+    public void terminateLease(int leaseId) {
+
+        Lease lease = leaseDb.getLeaseById(leaseId);
+
+        if (lease == null) {
+            throw new IllegalArgumentException("Lease not found");
         }
-        if (gracePeriod < 0) {
-            JOptionPane.showMessageDialog(null, "Grace period can not be negative", "ERROR", JOptionPane.ERROR_MESSAGE);
 
+        if (!lease.isIsActive()) {
+            throw new IllegalArgumentException("Lease already terminated");
         }
-        if (startDate == null || endDate == null) {
-            JOptionPane.showMessageDialog(null, "Start date and end date are required", "ERROR", JOptionPane.ERROR_MESSAGE);
 
+        lease.setIsActive(false);
+        leaseDb.updateLease(lease);
+
+        Property property = propertyDb.getById(lease.getPropertyID());
+
+        property.setAvailability(true);
+        propertyDb.updateProperty(property);
+    }
+
+    public List<Integer> getLeaseDuration(int id) {
+        try {
+            Lease lease = leaseDb.getLeaseById(id);
+            Period period = Period.between(lease.getStartDate(), lease.getEndDate());
+            List<Integer> duration = new ArrayList<>(List.of(period.getYears(), period.getMonths(), period.getDays()));
+
+            return duration;
+        } catch (RuntimeException e) {
+            throw new RuntimeException();
         }
-        if (!endDate.isAfter(startDate)) {
-            JOptionPane.showMessageDialog(null, "End date musr be after start date", "ERROR", JOptionPane.ERROR_MESSAGE);
+    }
 
+    private void validateLease(Lease lease) {
+        if (lease.getRentAmount() <= 0) {
+            throw new IllegalArgumentException("Rent amount must be greater than 0.");
+        }
+        if (lease.getSecurityDeposit() < 0) {
+            throw new IllegalArgumentException("Security deposit cannot be negative.");
+        }
+        if (lease.getLatePenaltyRate() < 0) {
+            throw new IllegalArgumentException("Late penalty rate cannot be negative.");
+        }
+        if (lease.getGracePeriod() < 0) {
+            throw new IllegalArgumentException("Grace period cannot be negative.");
+        }
+        if (lease.getStartDate() == null || lease.getEndDate() == null) {
+            throw new IllegalArgumentException("Start date and end date are required.");
+        }
+        if (!lease.getEndDate().isAfter(lease.getStartDate())) {
+            throw new IllegalArgumentException("End date must be after start date.");
         }
     }
 }

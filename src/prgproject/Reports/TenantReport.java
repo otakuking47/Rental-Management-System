@@ -2,12 +2,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package prgproject.services;
+package prgproject.Reports;
 
 /**
  *
  * @author Collin
  */
-public class HouseService{
-    
+public class TenantReport implements Report {
+
+    @Override
+    public String generate() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
