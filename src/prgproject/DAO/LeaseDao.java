@@ -169,7 +169,7 @@ public class LeaseDao {
 
             return lease;
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to load all leases due to ", e);
+            throw new RuntimeException("Faild to load lease due to ", e);
         }
     }
 

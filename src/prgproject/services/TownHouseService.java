@@ -63,11 +63,15 @@ public class TownHouseService {
         townHouseDAO.updateTownHouse(townHouse);
     }
 
-    public void removeTownHouse(TownHouse townHouse) {
-        if (townHouse == null) {
-            throw new IllegalArgumentException("TownHouse cannot be null.");
+    public void removeTownHouse(int id) {
+        try{
+            int result = townHouseDAO.deleteTownHouse(id);
+            if (result == 0){
+                throw new Ill
+            }
+        }catch(RuntimeException e){
+            
         }
-        townHouseDAO.deleteTownHouse(townHouse);
     }
 
     public double calculateLatePenalty(Lease lease, LocalDate paymentDate) {

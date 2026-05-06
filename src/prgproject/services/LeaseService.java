@@ -6,6 +6,7 @@ import java.util.List;
 import prgproject.model.*;
 import prgproject.DAO.LeaseDao;
 import prgproject.DAO.*;
+import java.util.Optional;
 
 public class LeaseService {
 
@@ -14,21 +15,21 @@ public class LeaseService {
 
     public void createLease(Lease lease) {
 
-        
+        validateLease(lease);
         Property property = propertyDb.getById(lease.getPropertyID());
-        
+
         if (!property.isAvailability()) {
             throw new IllegalArgumentException("Property already occupied");
         }
-        
+
         if (leaseDb.existsActiveLease(lease.getLeaseID())) {
             throw new IllegalArgumentException("Property already has an active lease");
         }
-        
+
         lease.setIsActive(true);
 
         leaseDb.saveLease(lease);
-        
+
         property.setAvailability(false);
         propertyDb.updateProperty(property);
     }
@@ -52,6 +53,21 @@ public class LeaseService {
 
         property.setAvailability(true);
         propertyDb.updateProperty(property);
+    }
+
+    public Optional<Lease> getLeaseById(int id) {
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("Invalid Lease ID: " + id);
+        }
+
+        try {
+
+            return Optional.ofNullable(leaseDb.getLeaseById(id));
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Database error while getting Lease ID: " + id, e);
+        }
     }
 
     public List<Integer> getLeaseDuration(int id) {

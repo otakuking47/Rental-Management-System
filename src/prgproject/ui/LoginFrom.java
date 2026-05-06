@@ -5,8 +5,8 @@ import java.awt.*;
 import prgproject.DAO.AdminDao;
 
 /**
- * Login form — UI layer only.
- * On success, opens DashboardForm and disposes this window.
+ * Login form — UI layer only. On success, opens DashboardForm and disposes this
+ * window.
  */
 public class LoginFrom extends JFrame {
 
@@ -45,20 +45,28 @@ public class LoginFrom extends JFrame {
 
         JLabel userLabel = new JLabel("Username:");
         userLabel.setForeground(Color.WHITE);
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.3;
         form.add(userLabel, gbc);
 
         userField = new JTextField(16);
-        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 0.7;
         form.add(userField, gbc);
 
         JLabel passLabel = new JLabel("Password:");
         passLabel.setForeground(Color.WHITE);
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.3;
         form.add(passLabel, gbc);
 
         passwordField = new JPasswordField(16);
-        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.weightx = 0.7;
         form.add(passwordField, gbc);
 
         root.add(form, BorderLayout.CENTER);
@@ -88,30 +96,35 @@ public class LoginFrom extends JFrame {
         String username = userField.getText().trim();
         String password = new String(passwordField.getPassword());
 
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                "Please enter both username and password.",
-                "Missing Input", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        try {
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Please enter both username and password.",
+                        "Missing Input", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        boolean valid = AdminDao.authenticate(username, password);
+            boolean valid = AdminDao.authenticate(username, password);
 
-        if (valid) {
-            new DashboardForm().setVisible(true);
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this,
-                "Invalid username or password.",
-                "Access Denied", JOptionPane.ERROR_MESSAGE);
-            passwordField.setText("");
+            if (valid) {
+                new DashboardForm().setVisible(true);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Invalid username or password.",
+                        "Access Denied", JOptionPane.ERROR_MESSAGE);
+                passwordField.setText("");
+            }
+        } catch (RuntimeException e) {
+            System.out.println("ERROR: " + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         SwingUtilities.invokeLater(() -> new LoginFrom().setVisible(true));
     }
 }
