@@ -28,13 +28,14 @@ public class LeaseDao {
                         rs.getInt("leaseID"),
                         rs.getInt("tenantID"),
                         rs.getInt("propertyID"),
-                        rs.getDate("startDate").toLocalDate(),
-                        rs.getDate("endDate").toLocalDate(),
-                        rs.getDouble("rentAmount"),
-                        rs.getDouble("securityDeposit"),
-                        rs.getDouble("latePenaltyRate"),
-                        rs.getInt("gracePeriod"),
-                        rs.getBoolean("isActive")
+                        rs.getDate("start_date").toLocalDate(),
+                        rs.getDate("end_date").toLocalDate(),
+                        rs.getDate("due_date").toLocalDate(),
+                        rs.getDouble("rent_amount"),
+                        rs.getDouble("security_deposit"),
+                        rs.getDouble("late_penalty_rate"),
+                        rs.getInt("grace_period"),
+                        rs.getBoolean("is_active")
                 );
 
                 leaseList.add(lease);
@@ -50,8 +51,8 @@ public class LeaseDao {
 // saves this Lease to the database
     public int saveLease(Lease lease) {
 
-        String sql = "Insert into leaseManager (leaseID, tenantID, propertyID, startDate, endDate, rentAmount, securityDeposit, latePenalityRate, gracePeriod) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
+        String sql = "Insert into leaseManager (leaseID, tenantID, propertyID, start_date, end_date, due_date, rent_amount, security_deposit, late_penality_rate, grace_period, is_active) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
 
@@ -60,11 +61,12 @@ public class LeaseDao {
             stmt.setInt(3, lease.getPropertyID());
             stmt.setDate(4, java.sql.Date.valueOf(lease.getStartDate()));
             stmt.setDate(5, java.sql.Date.valueOf(lease.getEndDate()));
-            stmt.setDouble(6, lease.getRentAmount());
-            stmt.setDouble(7, lease.getSecurityDeposit());
-            stmt.setDouble(8, lease.getLatePenaltyRate());
-            stmt.setInt(9, lease.getGracePeriod());
-            stmt.setBoolean(9, lease.isIsActive());
+            stmt.setDate(6, java.sql.Date.valueOf(lease.getDueDate()));
+            stmt.setDouble(7, lease.getRentAmount());
+            stmt.setDouble(8, lease.getSecurityDeposit());
+            stmt.setDouble(9, lease.getLatePenaltyRate());
+            stmt.setInt(10, lease.getGracePeriod());
+            stmt.setBoolean(11, lease.isIsActive());
 
             return stmt.executeUpdate();
 
@@ -88,13 +90,14 @@ public class LeaseDao {
                         rs.getInt("leaseID"),
                         rs.getInt("tenantID"),
                         rs.getInt("propertyID"),
-                        rs.getDate("startDate").toLocalDate(),
-                        rs.getDate("endDate").toLocalDate(),
-                        rs.getDouble("rentAmount"),
-                        rs.getDouble("securityDeposit"),
+                        rs.getDate("start_date").toLocalDate(),
+                        rs.getDate("end_date").toLocalDate(),
+                        rs.getDate("due_date").toLocalDate(),
+                        rs.getDouble("rent_amount"),
+                        rs.getDouble("security_deposit"),
                         rs.getDouble("latePenaltyRate"),
-                        rs.getInt("gracePeriod"),
-                        rs.getBoolean("isActive")
+                        rs.getInt("grace_period"),
+                        rs.getBoolean("is_active")
                 );
             }
 
@@ -108,7 +111,7 @@ public class LeaseDao {
 // updates a specific Lease
     public int updateLease(Lease lease) {
         String sql = "UPDATE leases "
-                + "tenantID = ?, propertyID = ?, startDate = ?, endDate = ?, rentAmount = ?, securityDeposit = ?, latePenalityRate = ?, gracePeriod = ?, isActive = ?"
+                + "tenantID = ?, propertyID = ?, start_date = ?, end_date = ?, due_date = ?, rent_amount = ?, security_deposit = ?, late_penality_rate = ?, grace_period = ?, is_active = ?"
                 + "WHERE leaseID = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement stmt = con.prepareStatement(sql);) {
@@ -117,12 +120,13 @@ public class LeaseDao {
             stmt.setInt(2, lease.getPropertyID());
             stmt.setDate(3, java.sql.Date.valueOf(lease.getStartDate()));
             stmt.setDate(4, java.sql.Date.valueOf(lease.getEndDate()));
-            stmt.setDouble(5, lease.getRentAmount());
-            stmt.setDouble(6, lease.getSecurityDeposit());
-            stmt.setDouble(7, lease.getLatePenaltyRate());
-            stmt.setInt(8, lease.getGracePeriod());
-            stmt.setBoolean(9, lease.isIsActive());
-            stmt.setInt(10, lease.getLeaseID());
+            stmt.setDate(5, java.sql.Date.valueOf(lease.getDueDate()));
+            stmt.setDouble(6, lease.getRentAmount());
+            stmt.setDouble(7, lease.getSecurityDeposit());
+            stmt.setDouble(8, lease.getLatePenaltyRate());
+            stmt.setInt(9, lease.getGracePeriod());
+            stmt.setBoolean(10, lease.isIsActive());
+            stmt.setInt(11, lease.getLeaseID());
 
             return stmt.executeUpdate();
 
@@ -157,13 +161,14 @@ public class LeaseDao {
                         rs.getInt("leaseID"),
                         rs.getInt("tenantID"),
                         rs.getInt("propertyID"),
-                        rs.getDate("startDate").toLocalDate(),
-                        rs.getDate("endDate").toLocalDate(),
-                        rs.getDouble("rentAmount"),
-                        rs.getDouble("securityDeposit"),
+                        rs.getDate("start_date").toLocalDate(),
+                        rs.getDate("end_date").toLocalDate(),
+                        rs.getDate("due_date").toLocalDate(),
+                        rs.getDouble("rent_amount"),
+                        rs.getDouble("security_deposit"),
                         rs.getDouble("latePenaltyRate"),
-                        rs.getInt("gracePeriod"),
-                        rs.getBoolean("isActive")
+                        rs.getInt("grace_period"),
+                        rs.getBoolean("is_active")
                 );
             }
 
@@ -174,7 +179,7 @@ public class LeaseDao {
     }
 
     public boolean existsActiveLease(int id) {
-        String sql = "SELECT isActive FROM leases WHERE propertyID = ?";
+        String sql = "SELECT is_active FROM leases WHERE propertyID = ?";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
@@ -183,7 +188,7 @@ public class LeaseDao {
 
             while (rs.next()) {
 
-                return rs.getBoolean("isActive");
+                return rs.getBoolean("is_active");
             }
             return false;
         } catch (SQLException e) {

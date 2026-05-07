@@ -29,7 +29,7 @@ public class PaymentDAO {
                             rs.getDouble("amount"), 
                             rs.getString("payment_date"), 
                             rs.getString("status"), 
-                            rs.getInt("lease_id")
+                            rs.getInt("leaseID")
                     );
 
                     paymentList.add(payment);
@@ -46,7 +46,7 @@ public class PaymentDAO {
 // saves this Payment to the database
     public int savePayment(Payment payment) {
         
-        String sql = "INSERT INTO payments (receipt, is_partial, amount, payment_date, status, lease_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payments (receipt, is_partial, amount, payment_date, status, leaseID) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -69,8 +69,8 @@ public class PaymentDAO {
 // updates a specific Payment
     public int updatePayment(Payment payment) {
         String sql = "UPDATE payments "
-                + " isPartial = ?, amount = ?, "
-                + " paymentDate = ?, status = ?, leaseID = ?"
+                + "SET isPartial = ?, amount = ?, "
+                + " payment_date = ?, status = ?, leaseID = ?"
                 + "WHERE receipt = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {

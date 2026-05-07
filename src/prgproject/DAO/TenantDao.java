@@ -25,10 +25,10 @@ public class TenantDao {
             
                 while (rs.next()) {
                     Tenant tenant = new Tenant(
-                            rs.getString("firstName"),
-                            rs.getString("lastName"),
+                            rs.getString("first_name"),
+                            rs.getString("last_name"),
                             rs.getInt("credential"),
-                            rs.getInt("phoneNumber"),
+                            rs.getInt("phone_number"),
                             rs.getString("email"),
                             rs.getString("status")
                     );
@@ -44,7 +44,7 @@ public class TenantDao {
     }
 
     public int saveTenant(Tenant tenant) {
-        String sql = "INSERT INTO tenants (credential, firstName, lastName, phoneNumber, email, status) "
+        String sql = "INSERT INTO tenants (credential, first_name, last_name, phone_number, email, status) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -64,7 +64,7 @@ public class TenantDao {
     }
 
     public int updateTenant(Tenant tenant) {
-        String sql = "UPDATE tenants SET firstName=?, lastName=?, phoneNumber=?, email=?, status=? "
+        String sql = "UPDATE tenants SET first_name=?, last_name=?, phone_number=?, email=?, status=? "
                 + "WHERE credential=?";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {

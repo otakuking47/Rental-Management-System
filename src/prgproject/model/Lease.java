@@ -8,23 +8,29 @@ public class Lease {
     private int propertyID;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate dueDate;
     private double rentAmount;
     private double securityDeposit;
     private double latePenaltyRate;
     private int gracePeriod;
     private boolean isActive;
 
-    public Lease(int leaseID, int tenantID, int propertyID, LocalDate startDate, LocalDate endDate, double rentAmount, double securityDeposit, double latePenaltyRate, int gracePeriod, boolean isActive) {
+    public Lease(int leaseID, int tenantID, int propertyID, LocalDate startDate, LocalDate endDate, LocalDate dueDate, double rentAmount, double securityDeposit, double latePenaltyRate, int gracePeriod, boolean isActive) {
         this.leaseID = leaseID;
         this.tenantID = tenantID;
         this.propertyID = propertyID;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.dueDate = dueDate;
         this.rentAmount = rentAmount;
         this.securityDeposit = securityDeposit;
         this.latePenaltyRate = latePenaltyRate;
         this.gracePeriod = gracePeriod;
         this.isActive = isActive;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
     public boolean isIsActive() {
@@ -77,6 +83,10 @@ public class Lease {
 
     public double getRentAmount() {
         return rentAmount;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
     public void setLeaseID(int leaseID) {

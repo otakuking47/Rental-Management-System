@@ -27,7 +27,7 @@ public class PropertyDao {
 
             while (rs.next()) {
                 Property property = new Property(
-                        rs.getInt("ID"),
+                        rs.getInt("propertyID"),
                         rs.getString("type"),
                         rs.getString("floor_size"),
                         rs.getString("full_address"),
@@ -50,9 +50,9 @@ public class PropertyDao {
 // saves this Property to the database
     public int saveProperty(Property property) {
         String sql = "INSERT INTO property "
-                + "(ID, type, floor_size, full_address, "
+                + "(propertyID, type, floor_size, full_address, "
                 + "location, market_value, rental_cost, availability) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
             ps.setInt(1, property.getID());
@@ -77,7 +77,7 @@ public class PropertyDao {
         String sql = "UPDATE property "
                 + "SET type = ?, floor_size = ?, full_address = ?, "
                 + "location = ?, market_value = ?, rental_cost = ?, availability = ?"
-                + "WHERE ID = ? ";
+                + "WHERE propertyID = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
              
@@ -99,7 +99,7 @@ public class PropertyDao {
 
     //deletes a Property
     public int deleteProperty(int id) {
-        String sql = "DELETE FROM property WHERE ID =?";
+        String sql = "DELETE FROM property WHERE propertyID =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -112,7 +112,7 @@ public class PropertyDao {
     }
     
     public Property getById(int id){
-        String sql = "SELECT * FROM property WHERE ID = ?";
+        String sql = "SELECT * FROM property WHERE propertyID = ?";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
             Property property = null;
@@ -122,7 +122,7 @@ public class PropertyDao {
             while (rs.next()) {
                 
                 property = new Property(
-                        rs.getInt("ID"),
+                        rs.getInt("propertyID"),
                         rs.getString("type"),
                         rs.getString("floor_size"),
                         rs.getString("full_address"),

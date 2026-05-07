@@ -11,13 +11,13 @@ import prgproject.model.TownHouse;
 import prgproject.model.Lease;
 import prgproject.model.Payment;
 import prgproject.model.Tenant;
-import prgproject.DAO.TownHouseDAO;
+import prgproject.DAO.TownHouseDao;
 import prgproject.DAO.LeaseDao;
 import prgproject.DAO.PaymentDAO;
 
 public class TownHouseService {
 
-    private final TownHouseDAO townHouseDAO = new TownHouseDAO();
+    private final TownHouseDao townHouseDAO = new TownHouseDao();
     private final PaymentDAO paymentDAO = new PaymentDAO();
     
 

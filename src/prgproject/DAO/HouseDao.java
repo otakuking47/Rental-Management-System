@@ -24,7 +24,7 @@ public class HouseDao {
 
             while (rs.next()) {
                 House house = new House(
-                        rs.getInt("ID"),
+                        rs.getInt("propertyID"),
                         rs.getString("floor_size"),
                         rs.getString("full_address"),
                         rs.getString("location"),
@@ -47,7 +47,7 @@ public class HouseDao {
 // saves this House to the database
     public int saveHouse(House house) {
         String sql = "INSERT INTO houses "
-                + "(ID, floor_size, full_address, "
+                + "(propertyID, floor_size, full_address, "
                 + "location, market_value, rental_cost, availability, plot_size) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
@@ -73,7 +73,7 @@ public class HouseDao {
         String sql = "UPDATE houses "
                 + "floor_size = ?, full_address = ?, "
                 + "location = ?, market_value = ?, rental_cost = ?, availability = ?, plot_size = ? "
-                + "WHERE ID = ? ";
+                + "WHERE propertyID = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
@@ -95,7 +95,7 @@ public class HouseDao {
 
     //deletes a House
     public int deleteHouse(int id) {
-        String sql = "DELETE FROM houses WHERE ID =?";
+        String sql = "DELETE FROM houses WHERE propertyID =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -108,7 +108,7 @@ public class HouseDao {
     }
     
     public House getById(int id){
-        String sql = "SELECT * FROM houses WHERE ID = ?";
+        String sql = "SELECT * FROM houses WHERE propertyID = ?";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
             House house = null;
@@ -118,7 +118,7 @@ public class HouseDao {
             while (rs.next()) {
                 
                 house = new House(
-                        rs.getInt("ID"),
+                        rs.getInt("propertyID"),
                         rs.getString("floor_size"),
                         rs.getString("full_address"),
                         rs.getString("location"),

@@ -28,7 +28,7 @@ public class ApartmentDao {
 
             while (rs.next()) {
                 Apartment apartment = new Apartment(
-                        rs.getInt("ID"),
+                        rs.getInt("propertyID"),
                         rs.getString("floor_size"),
                         rs.getString("full_address"),
                         rs.getString("location"),
@@ -54,7 +54,7 @@ public class ApartmentDao {
 // saves this Apartment to the database
     public int saveApartment(Apartment apartment) {
         String sql = "INSERT INTO apartments "
-                + "(ID, unit_no, backyard, floor_size, full_address, "
+                + "(propertyID, unit_no, backyard, floor_size, full_address, "
                 + "location, market_value, rental_cost, availability, floor_level, elevator) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
@@ -83,7 +83,7 @@ public class ApartmentDao {
         String sql = "UPDATE apartments "
                 + "unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
                 + "location = ?, market_value = ?, rental_cost = ?, availability = ?, floor_level = ?, elevator = ?"
-                + "WHERE ID = ? ";
+                + "WHERE propertyID = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
@@ -108,7 +108,7 @@ public class ApartmentDao {
 
     //deletes a Apartment
     public int deleteApartment(int id) {
-        String sql = "DELETE FROM apartments WHERE ID =?";
+        String sql = "DELETE FROM apartments WHERE propertyID =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -132,7 +132,7 @@ public class ApartmentDao {
             while (rs.next()) {
                 
                 apartment = new Apartment(
-                        rs.getInt("ID"),
+                        rs.getInt("propertyID"),
                         rs.getString("floor_size"),
                         rs.getString("full_address"),
                         rs.getString("location"),
