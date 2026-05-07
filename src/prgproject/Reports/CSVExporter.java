@@ -4,15 +4,22 @@
  */
 package prgproject.Reports;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 /**
- *
- * @author Collin
+ * CSV Exporter Implementation
  */
-public class CSVExporter implements ReportExporter{
+public class CSVExporter implements ReportExporter {
 
     @Override
     public void export(String data) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String fileName = "Rental_Status_Report.csv";
+        try (FileWriter writer = new FileWriter(fileName)) {
+            writer.write(data);
+            System.out.println("✅ Report exported successfully to: " + fileName);
+        } catch (IOException e) {
+            System.err.println("❌ Failed to export CSV: " + e.getMessage());
+        }
     }
-    
 }
