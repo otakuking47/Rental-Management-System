@@ -17,9 +17,9 @@ public class CSVExporter implements ReportExporter {
         String fileName = "Rental_Status_Report.csv";
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(data);
-            System.out.println("✅ Report exported successfully to: " + fileName);
+            System.out.println(" Report exported successfully to: " + fileName);
         } catch (IOException e) {
-            System.err.println("❌ Failed to export CSV: " + e.getMessage());
+            System.err.println(" Failed to export CSV: " + e.getMessage());
         }
     }
 }
