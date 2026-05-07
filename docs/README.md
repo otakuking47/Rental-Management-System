@@ -377,6 +377,28 @@ git mv src/prgproject/DAO/TownHouseDAO.java src/prgproject/DAO/TownHouseDao_tmp.
 git mv src/prgproject/DAO/TownHouseDao_tmp.java src/prgproject/DAO/TownHouseDao.java
 ```
 
+### Compile fails with `error: '(' or '[' expected` at `TownHouseService.java:71`
+You're looking at an unfinished `throw new Ill` statement that was committed to an older branch and re-introduced by a merge. Fix it:
+
+```java
+// src/prgproject/services/TownHouseService.java line 67–75 — replace this block
+public void removeTownHouse(int id) {
+    try {
+        int result = townHouseDAO.deleteTownHouse(id);
+        if (result == 0) {
+            throw new RuntimeException("Failed to delete townhouse: " + id);
+        }
+    } catch (RuntimeException e) {
+        throw e;
+    }
+}
+```
+
+After a merge, also re-check that `TownHouseService` exposes `saveTownHouse / updateTownHouse / deleteTownHouse` (called by `PropertyPanel`); the older branch only had `addTownHouse / modifyTownHouse / removeTownHouse`.
+
+### After a merge, multiple `Reports/*Report.java` files fail to compile
+If you see `error: interface expected here` on `TenantReport`, `LeaseReport`, `RevenueReport`, or `PaymentReport`, the older branch had `implements Report` against a class (not an interface). Strip `implements Report` and the `@Override` annotation from `generate()` so each becomes a plain class. The active reporting path is `ReportPanel` + `ReportData` + `*Exporter` — those legacy `*Report.java` files are unused stubs.
+
 ### `mysqld` won't start — port 3306 already in use
 Another MySQL or MariaDB instance is already running. Either stop it, or pass a different port to `mysqld` and update the URL in [DBConnection.java](src/prgproject/utils/DBConnection.java).
 

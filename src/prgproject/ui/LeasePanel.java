@@ -129,7 +129,7 @@ public class LeasePanel extends JPanel {
     private void handleAdd() {
         try {
             Lease l = buildLeaseFromForm();
-            LeaseService.saveLease(l);   // static method on LeaseDao
+            leaseService.saveLease(l);
             JOptionPane.showMessageDialog(this, "Lease saved.");
             clearForm(); loadTable();
         } catch (Exception ex) {
@@ -173,14 +173,20 @@ public class LeasePanel extends JPanel {
     }
 
     private Lease buildLeaseFromForm() {
+        LocalDate start = LocalDate.parse(startDateField.getText().trim());
+        LocalDate end   = LocalDate.parse(endDateField.getText().trim());
         return new Lease(
             Integer.parseInt(leaseIdField.getText().trim()),
-            LocalDate.parse(startDateField.getText().trim()),
-            LocalDate.parse(endDateField.getText().trim()),
+            0,                  // tenantID — TODO: collect from UI
+            0,                  // propertyID — TODO: collect from UI
+            start,
+            end,
+            start,              // dueDate defaults to startDate
             Double.parseDouble(rentAmountField.getText().trim()),
             Double.parseDouble(secDepositField.getText().trim()),
             Double.parseDouble(penaltyField.getText().trim()),
-            Integer.parseInt(graceField.getText().trim())
+            Integer.parseInt(graceField.getText().trim()),
+            true
         );
     }
 

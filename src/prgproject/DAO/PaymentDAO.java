@@ -38,7 +38,7 @@ public class PaymentDAO {
             return paymentList;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to load all payments due to ", e);
+            throw new RuntimeException("Faild to load all payments due to ", e);
         }
         
     }
@@ -62,7 +62,7 @@ public class PaymentDAO {
             
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to save payment: " + payment.getReceipt() + " due to ", e);
+            throw new RuntimeException("Faild to save payment: " + payment.getReceipt() + " due to ", e);
         }
     }
 
@@ -70,7 +70,7 @@ public class PaymentDAO {
     public int updatePayment(Payment payment) {
         String sql = "UPDATE payments "
                 + "SET is_partial = ?, amount = ?, "
-                + " payment_date = ?, status = ?, leaseID = ? "
+                + "payment_date = ?, status = ?, leaseID = ? "
                 + "WHERE receipt = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
@@ -85,7 +85,7 @@ public class PaymentDAO {
             return ps.executeUpdate();
             
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update payment:" + payment.getReceipt() + " due to ", e);
+            throw new RuntimeException("Faild to update payment:" + payment.getReceipt() + " due to ", e);
         }
     }
 
@@ -95,12 +95,37 @@ public class PaymentDAO {
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, receipt);
-            
+
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete payment: " + receipt + " due to ", e);
+            throw new RuntimeException("Faild to delete payment: " + receipt + " due to ", e);
         }
     }
 
+    public double getTotalPaidByLeaseId(int leaseId) {
+        String sql = "SELECT COALESCE(SUM(amount), 0) AS total FROM payments WHERE leaseID = ?";
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, leaseId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getDouble("total");
+            return 0.0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get total paid for lease: " + leaseId, e);
+        }
+    }
+
+    public double getMonthlyTotalPaid(int leaseId, String yyyyMM) {
+        String sql = "SELECT COALESCE(SUM(amount), 0) AS total FROM payments "
+                   + "WHERE leaseID = ? AND DATE_FORMAT(payment_date, '%Y-%m') = ?";
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, leaseId);
+            ps.setString(2, yyyyMM);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getDouble("total");
+            return 0.0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get monthly total for lease: " + leaseId, e);
+        }
+    }
 }

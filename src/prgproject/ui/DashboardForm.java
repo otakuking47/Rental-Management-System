@@ -24,15 +24,12 @@ public class DashboardForm extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem logoutItem = new JMenuItem("Logout");
-        logoutItem.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this,
-                "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                new LoginFrom().setVisible(true);
-                dispose();
-            }
-        });
+        logoutItem.addActionListener(e -> handleLogout());
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(e -> System.exit(0));
         fileMenu.add(logoutItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
 
@@ -45,6 +42,25 @@ public class DashboardForm extends JFrame {
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 17));
         titleLabel.setForeground(Color.WHITE);
         headerPanel.add(titleLabel, BorderLayout.WEST);
+
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.setBackground(new Color(231, 76, 60));
+        logoutButton.setForeground(Color.WHITE);
+        logoutButton.setFocusPainted(false);
+        logoutButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        logoutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logoutButton.setBorder(BorderFactory.createEmptyBorder(6, 18, 6, 18));
+        logoutButton.setToolTipText("Log out and return to the login screen (Ctrl+L)");
+        logoutButton.addActionListener(e -> handleLogout());
+        headerPanel.add(logoutButton, BorderLayout.EAST);
+
+        // Keyboard shortcut: Ctrl+L
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L,
+                java.awt.event.InputEvent.CTRL_DOWN_MASK), "logout");
+        getRootPane().getActionMap().put("logout", new AbstractAction() {
+            @Override public void actionPerformed(java.awt.event.ActionEvent e) { handleLogout(); }
+        });
 
         // ── tabbed pane ──────────────────────────────────────────────────────
         JTabbedPane tabs = new JTabbedPane();
@@ -60,5 +76,15 @@ public class DashboardForm extends JFrame {
         setLayout(new BorderLayout());
         add(headerPanel, BorderLayout.NORTH);
         add(tabs, BorderLayout.CENTER);
+    }
+
+    private void handleLogout() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to logout?", "Logout",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (confirm == JOptionPane.YES_OPTION) {
+            new LoginFrom().setVisible(true);
+            dispose();
+        }
     }
 }

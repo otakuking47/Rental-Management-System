@@ -19,7 +19,25 @@ public class TownHouseService {
 
     private final TownHouseDao townHouseDAO = new TownHouseDao();
     private final PaymentDAO paymentDAO = new PaymentDAO();
-    
+    private final LeaseDao leaseDao = new LeaseDao();
+
+    public void saveTownHouse(TownHouse townHouse) {
+        validateTownHouse(townHouse);
+        int result = townHouseDAO.saveTownHouse(townHouse);
+        if (result == 0) throw new RuntimeException("Failed to save townhouse.");
+    }
+
+    public void updateTownHouse(TownHouse townHouse) {
+        validateTownHouse(townHouse);
+        int result = townHouseDAO.updateTownHouse(townHouse);
+        if (result == 0) throw new RuntimeException("Failed to update townhouse: " + townHouse.getID());
+    }
+
+    public void deleteTownHouse(int id) {
+        if (id <= 0) throw new IllegalArgumentException("Invalid townhouse ID.");
+        int result = townHouseDAO.deleteTownHouse(id);
+        if (result == 0) throw new RuntimeException("Failed to delete townhouse: " + id);
+    }
 
     public List<TownHouse> getAllTownHouses() {
         return townHouseDAO.getAllTownHouses();
@@ -67,7 +85,7 @@ public class TownHouseService {
         try{
             int result = townHouseDAO.deleteTownHouse(id);
             if (result == 0){
-                throw new Ill
+                throw new RuntimeException("Failed to delete townhouse: " + id);
             }
         }catch(RuntimeException e){
             
@@ -132,7 +150,7 @@ public class TownHouseService {
 
         validateLease(lease);
 
-        LeaseDao.saveLease(lease);
+        leaseDao.saveLease(lease);
 
         townHouse.setAvailability(false);
         townHouseDAO.updateTownHouse(townHouse);

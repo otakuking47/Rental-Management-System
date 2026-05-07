@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
 package prgproject.DAO;
 
 import java.sql.Connection;
@@ -9,16 +13,17 @@ import java.util.List;
 import prgproject.model.Apartment;
 import prgproject.utils.DBConnection;
 
+/**
+ *
+ * @author Collin
+ */
 public class ApartmentDao {
 
     public List<Apartment> getAllApartments() {
 
-        String sql = "SELECT * FROM ApartmentTable";
+        String sql = "SELECT * FROM apartments";
 
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<Apartment> apartmentList = new ArrayList<>();
 
             while (rs.next()) {
@@ -29,7 +34,7 @@ public class ApartmentDao {
                         rs.getString("location"),
                         rs.getDouble("market_value"),
                         rs.getDouble("rental_cost"),
-                        rs.getBoolean("availablity"),
+                        rs.getBoolean("availability"),
                         rs.getInt("unit_no"),
                         rs.getInt("floor_level"),
                         rs.getBoolean("elevator"),
@@ -42,19 +47,17 @@ public class ApartmentDao {
             return apartmentList;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to load all ApartmentTable due to ", e);
+            throw new RuntimeException("Faild to load all apartments due to ", e);
         }
     }
 
-    // saves this Apartment to the database
+// saves this Apartment to the database
     public int saveApartment(Apartment apartment) {
-        String sql = "INSERT INTO ApartmentTable "
+        String sql = "INSERT INTO apartments "
                 + "(propertyID, unit_no, backyard, floor_size, full_address, "
-                + "location, market_value, rental_cost, availablity, floor_level, elevator) "
+                + "location, market_value, rental_cost, availability, floor_level, elevator) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
             ps.setInt(1, apartment.getID());
             ps.setInt(2, apartment.getUnitNo());
@@ -71,24 +74,22 @@ public class ApartmentDao {
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to save record id: " + apartment.getID() + " due to ", e);
+            throw new RuntimeException("Faild to save record id: " + apartment.getID() + " due to ", e);
         }
     }
 
-    // updates a specific apartment
+// updates a specific apartment
     public int updateApartment(Apartment apartment) {
-        
-        String sql = "UPDATE ApartmentTable SET "
-                + "unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
-                + "location = ?, market_value = ?, rental_cost = ?, availablity = ?, "
-                + "floor_level = ?, elevator = ? "
-                + "WHERE propertyID = ?";
+        String sql = "UPDATE apartments "
+                + "SET unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
+                + "location = ?, market_value = ?, rental_cost = ?, availability = ?, floor_level = ?, elevator = ? "
+                + "WHERE propertyID = ? ";
 
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
             ps.setInt(1, apartment.getUnitNo());
             ps.setBoolean(2, apartment.isHasBackyard());
+
             ps.setString(3, apartment.getFloorSize());
             ps.setString(4, apartment.getFullAddress());
             ps.setString(5, apartment.getLocation());
@@ -100,59 +101,55 @@ public class ApartmentDao {
             ps.setInt(11, apartment.getID());
 
             return ps.executeUpdate();
-
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to update record id: " + apartment.getID() + " due to ", e);
+            throw new RuntimeException("Faild update record id: " + apartment.getID() + " due to ", e);
         }
     }
 
-    // deletes an Apartment
+    //deletes a Apartment
     public int deleteApartment(int id) {
-        String sql = "DELETE FROM ApartmentTable WHERE propertyID = ?";
-
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        String sql = "DELETE FROM apartments WHERE propertyID =?";
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
+
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to delete apartment: " + id + " due to ", e);
+            throw new RuntimeException("Faild to delete apartment: " + id + " due to ", e);
         }
     }
+    
+    public Apartment getById(int id){
+        String sql = "SELECT * FROM apartments WHERE propertyID = ?";
 
-    public Apartment getById(int id) {
-        
-        String sql = "SELECT * FROM ApartmentTable WHERE propertyID = ?";
-
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
             ps.setInt(1, id);
-            
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new Apartment(
-                            rs.getInt("propertyID"),
-                            rs.getString("floor_size"),
-                            rs.getString("full_address"),
-                            rs.getString("location"),
-                            rs.getDouble("market_value"),
-                            rs.getDouble("rental_cost"),
-                            rs.getBoolean("availablity"),
-                            rs.getInt("unit_no"),
-                            rs.getInt("floor_level"),
-                            rs.getBoolean("elevator"),
-                            rs.getBoolean("backyard")
-                    );
-                }
+            ResultSet rs = ps.executeQuery();
+            Apartment apartment = null;
+             
+            while (rs.next()) {
+                
+                apartment = new Apartment(
+                        rs.getInt("propertyID"),
+                        rs.getString("floor_size"),
+                        rs.getString("full_address"),
+                        rs.getString("location"),
+                        rs.getDouble("market_value"),
+                        rs.getDouble("rental_cost"),
+                        rs.getBoolean("availability"),
+                        rs.getInt("unit_no"),
+                        rs.getInt("floor_level"),
+                        rs.getBoolean("elevator"),
+                        rs.getBoolean("backyard")
+                );
             }
 
-             return null;
+            return apartment;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to load apartment by id: " + id + " due to ", e);
+            throw new RuntimeException("Faild to load all apartments due to ", e);
         }
     }
 }

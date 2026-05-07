@@ -2,10 +2,14 @@ package prgproject.ui;
 
 import prgproject.model.*;
 import prgproject.services.*;
+import prgproject.Reports.*;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +30,7 @@ public class ReportPanel extends JPanel {
     private JTable reportTable;
     private DefaultTableModel reportModel;
     private JTextArea summaryArea;
+    private String currentReportTitle = "Report";
 
     public ReportPanel() {
         setLayout(new BorderLayout(8, 8));
@@ -81,6 +86,7 @@ public class ReportPanel extends JPanel {
     // ── Report generators ────────────────────────────────────────────────────
 
     private void reportAllTenants() {
+        currentReportTitle = "All Tenants";
         reportModel.setRowCount(0);
         reportModel.setColumnCount(0);
         reportModel.addColumn("ID"); reportModel.addColumn("First Name");
@@ -101,6 +107,7 @@ public class ReportPanel extends JPanel {
     }
 
     private void reportAllProperties() {
+        currentReportTitle = "All Properties";
         reportModel.setRowCount(0);
         reportModel.setColumnCount(0);
         reportModel.addColumn("ID"); reportModel.addColumn("Type");
@@ -139,6 +146,7 @@ public class ReportPanel extends JPanel {
     }
 
     private void reportActiveLeases() {
+        currentReportTitle = "Active Leases";
         reportModel.setRowCount(0);
         reportModel.setColumnCount(0);
         reportModel.addColumn("Lease ID"); reportModel.addColumn("Start Date");
@@ -163,6 +171,7 @@ public class ReportPanel extends JPanel {
     }
 
     private void reportAllPayments() {
+        currentReportTitle = "All Payments";
         reportModel.setRowCount(0);
         reportModel.setColumnCount(0);
         reportModel.addColumn("Receipt"); reportModel.addColumn("Partial");
@@ -187,6 +196,7 @@ public class ReportPanel extends JPanel {
     }
 
     private void reportSummary() {
+        currentReportTitle = "System Summary";
         reportModel.setRowCount(0);
         reportModel.setColumnCount(0);
         reportModel.addColumn("Category"); reportModel.addColumn("Count");
@@ -226,25 +236,70 @@ public class ReportPanel extends JPanel {
         summaryArea.setText(sb.toString());
     }
 
-    // ── Export stubs (to be completed by Report layer team) ──────────────────
+    // ── Export ───────────────────────────────────────────────────────────────
 
-    private void exportCSV() {
-        // TODO: wire to CSVExporter once Report layer is complete
-        JOptionPane.showMessageDialog(this,
-            "CSV export will be available once the Report layer is implemented.",
-            "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+    private void exportCSV()   { runExport(new CSVExporter()); }
+    private void exportPDF()   { runExport(new PDFExporter()); }
+    private void exportExcel() { runExport(new ExcelExporter()); }
+
+    private void runExport(ReportExporter exporter) {
+        if (reportModel.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this,
+                "Generate a report first, then click an export button.",
+                "Nothing to export", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        ReportData data = snapshotCurrentReport();
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Export as " + exporter.getFormatName());
+        chooser.setSelectedFile(new File(suggestedFileName(data, exporter)));
+        chooser.setFileFilter(new FileNameExtensionFilter(
+            exporter.getFormatName() + " (*." + exporter.getDefaultExtension() + ")",
+            exporter.getDefaultExtension()));
+
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+
+        File target = chooser.getSelectedFile();
+        if (!target.getName().toLowerCase().endsWith("." + exporter.getDefaultExtension())) {
+            target = new File(target.getParentFile(), target.getName() + "." + exporter.getDefaultExtension());
+        }
+
+        try {
+            exporter.export(data, target);
+            JOptionPane.showMessageDialog(this,
+                "Exported to:\n" + target.getAbsolutePath(),
+                "Export complete", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                "Export failed: " + ex.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    private void exportPDF() {
-        JOptionPane.showMessageDialog(this,
-            "PDF export will be available once the Report layer is implemented.",
-            "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+    private ReportData snapshotCurrentReport() {
+        List<String> cols = new ArrayList<>();
+        for (int c = 0; c < reportModel.getColumnCount(); c++) {
+            cols.add(reportModel.getColumnName(c));
+        }
+        List<List<Object>> rows = new ArrayList<>();
+        for (int r = 0; r < reportModel.getRowCount(); r++) {
+            List<Object> row = new ArrayList<>();
+            for (int c = 0; c < reportModel.getColumnCount(); c++) {
+                row.add(reportModel.getValueAt(r, c));
+            }
+            rows.add(row);
+        }
+        return new ReportData(currentReportTitle, cols, rows, summaryArea.getText());
     }
 
-    private void exportExcel() {
-        JOptionPane.showMessageDialog(this,
-            "Excel export will be available once the Report layer is implemented.",
-            "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+    private String suggestedFileName(ReportData data, ReportExporter exporter) {
+        String safe = data.getTitle().toLowerCase()
+            .replaceAll("[^a-z0-9]+", "_")
+            .replaceAll("^_+|_+$", "");
+        if (safe.isEmpty()) safe = "report";
+        return safe + "_" + java.time.LocalDate.now() + "." + exporter.getDefaultExtension();
     }
 
     private JButton makeButton(String text, Color bg,
