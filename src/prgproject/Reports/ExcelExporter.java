@@ -18,9 +18,9 @@ public class ExcelExporter implements ReportExporter {
 
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(data);
-            System.out.println("✅ Report exported successfully to: " + fileName);
+            System.out.println(" Report exported successfully to: " + fileName);
         } catch (IOException e) {
-            System.err.println("❌ Failed to export Excel: " + e.getMessage());
+            System.err.println(" Failed to export Excel: " + e.getMessage());
         }
     }
 }
