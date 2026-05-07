@@ -5,9 +5,14 @@
 package prgproject.Reports;
 
 /**
- *
- * @author Collin
+ * ReportExporter Interface
+ * Used for Polymorphism - allows different export formats
  */
 public interface ReportExporter {
+
+    /**
+     * Export report data to specific format
+     * @param data The formatted report content
+     */
     void export(String data);
 }
