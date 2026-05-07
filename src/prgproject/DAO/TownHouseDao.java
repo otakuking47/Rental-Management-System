@@ -19,7 +19,7 @@ public class TownHouseDao {
 
     public List<TownHouse> getAllTownHouses() {
 
-        String sql = "SELECT * FROM townhouses";
+        String sql = "SELECT * FROM TownHouseTable";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<TownHouse> townHouseList = new ArrayList<>();
@@ -32,7 +32,7 @@ public class TownHouseDao {
                         rs.getString("location"),
                         rs.getDouble("market_value"),
                         rs.getDouble("rental_cost"),
-                        rs.getBoolean("availability"),
+                        rs.getBoolean("availablity"),
                         rs.getInt("unit_no"),
                         rs.getBoolean("backyard")
                 );
@@ -49,9 +49,9 @@ public class TownHouseDao {
 
 // saves this TownHouse to the database
     public int saveTownHouse(TownHouse t) {
-        String sql = "INSERT INTO townhouses "
+        String sql = "INSERT INTO TownHouseTable "
                 + "(propertyID, unit_no, backyard, floor_size, full_address, "
-                + "location, market_value, rental_cost, availability) "
+                + "location, market_value, rental_cost, availablity) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
@@ -75,9 +75,9 @@ public class TownHouseDao {
 
 // updates a specific Townhouse
     public int updateTownHouse(TownHouse t) {
-        String sql = "UPDATE townhouses "
+        String sql = "UPDATE TownHouseTable SET"
                 + "unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
-                + "location = ?, market_value = ?, rental_cost = ?, availability = ? "
+                + "location = ?, market_value = ?, rental_cost = ?, availablity = ? "
                 + "WHERE propertyID = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
@@ -101,7 +101,7 @@ public class TownHouseDao {
 
     //deletes a TownHouse
     public int deleteTownHouse(int id) {
-        String sql = "DELETE FROM townhouse WHERE propertyID =?";
+        String sql = "DELETE FROM TownHouseTable WHERE propertyID =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -111,9 +111,9 @@ public class TownHouseDao {
             throw new RuntimeException("Faild to delete propertyID: " + id + " due to ", e);
         }
     }
-    
-    public TownHouse getById(int id){
-        String sql = "SELECT * FROM townhouses WHERE propertyID = ?";
+
+    public TownHouse getById(int id) {
+        String sql = "SELECT * FROM TownHouseTable WHERE propertyID = ?";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
             TownHouse townhouse = null;
@@ -127,7 +127,7 @@ public class TownHouseDao {
                         rs.getString("location"),
                         rs.getDouble("market_value"),
                         rs.getDouble("rental_cost"),
-                        rs.getBoolean("availability"),
+                        rs.getBoolean("availablity"),
                         rs.getInt("unit_no"),
                         rs.getBoolean("backyard")
                 );

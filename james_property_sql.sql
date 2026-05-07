@@ -1,6 +1,11 @@
 CREATE DATABASE IF NOT EXISTS property_management;
 USE property_management;
 
+CREATE TABLE AdminTable(
+	username VARCHAR(30),
+    passwordHash VARCHAR(32)
+);
+
 CREATE TABLE TenantTable (
     credential   INT NOT NULL,
     first_name   VARCHAR(20),
@@ -12,7 +17,7 @@ CREATE TABLE TenantTable (
 );
 
 CREATE TABLE PropertyTable (
-    propertyID   INT NOT NULL AUTO_INCREMENT,
+    propertyID   INT NOT NULL,
     type         VARCHAR(9),
     floor_size   VARCHAR(10),
     full_address VARCHAR(40),
@@ -72,9 +77,8 @@ CREATE TABLE TownHouseTable (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-
 CREATE TABLE leaseTable (
-    leaseID              INT NOT NULL AUTO_INCREMENT,
+    leaseID              INT NOT NULL,
     tenantID             INT NOT NULL,
     propertyID           INT NOT NULL,
     start_date           DATE,
@@ -83,7 +87,7 @@ CREATE TABLE leaseTable (
     security_deposit     DECIMAL(10, 2),
     due_date             DATE,
     grace_period         INT, -- days
-    late_penalty_rate    DECIMAL(2, 2),
+    late_penalty_rate    DECIMAL(5, 2),
     is_active            BOOLEAN,
     PRIMARY KEY (leaseID),
     CONSTRAINT fk_lease_tenant

@@ -18,7 +18,7 @@ public class TenantDao {
 
     public List<Tenant> getAllTenants() {
 
-        String sql = "SELECT * FROM townhouses";
+        String sql = "SELECT * FROM TenantTable";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<Tenant> townHouseList = new ArrayList<>();
@@ -44,7 +44,7 @@ public class TenantDao {
     }
 
     public int saveTenant(Tenant tenant) {
-        String sql = "INSERT INTO tenants (credential, first_name, last_name, phone_number, email, status) "
+        String sql = "INSERT INTO TenantTable (credential, first_name, last_name, phone_number, email, status) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -64,7 +64,7 @@ public class TenantDao {
     }
 
     public int updateTenant(Tenant tenant) {
-        String sql = "UPDATE tenants SET first_name=?, last_name=?, phone_number=?, email=?, status=? "
+        String sql = "UPDATE TenantTable SET first_name=?, last_name=?, phone_number=?, email=?, status=? "
                 + "WHERE credential=?";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -85,7 +85,7 @@ public class TenantDao {
     }
 
     public int deleteTenant(int credential) {
-        String sql = "DELETE FROM tenants WHERE credential = ?";
+        String sql = "DELETE FROM TenantTable WHERE credential = ?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, credential);

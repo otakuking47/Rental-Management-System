@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/propertymanagement";
+    private static final String URL = "jdbc:mysql://localhost:3306/property_management";
     private static final String USER = "root";
     private static final String PASS = "toor";
 
