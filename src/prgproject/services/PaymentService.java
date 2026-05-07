@@ -23,12 +23,12 @@ public class PaymentService {
 
             double newTotal = totalPaid + payment.getAmount();
 
-            // 🔥 MONTHLY TRACKING
+            // MONTHLY TRACKING
             String month = payment.getPaymentDate().substring(0, 7);
 
             double monthlyPaid = paymentDAO.getMonthlyTotalPaid(leaseId, month);
 
-            // 🔥 LATE PENALTY (example daysLate = 0 for now)
+            // LATE PENALTY (example daysLate = 0 for now)
             int daysLate = 0;
 
             double penalty = leaseService.calculateLatePenalty(
