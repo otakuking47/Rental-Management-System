@@ -55,15 +55,19 @@ public class LeaseService {
         propertyDb.updateProperty(property);
     }
 
-    public Optional<Lease> getLeaseById(int id) {
+    public Lease getLeaseById(int id) {
 
         if (id <= 0) {
             throw new IllegalArgumentException("Invalid Lease ID: " + id);
         }
-
         try {
 
-            return Optional.ofNullable(leaseDb.getLeaseById(id));
+            Lease result = leaseDb.getLeaseById(id);
+            if(result == null){
+                throw new RuntimeException("lease not found with ID: " + id);
+            }else{
+                return result;
+            }
 
         } catch (RuntimeException e) {
             throw new RuntimeException("Database error while getting Lease ID: " + id, e);

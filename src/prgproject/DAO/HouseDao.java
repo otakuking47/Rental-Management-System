@@ -17,7 +17,7 @@ public class HouseDao {
 
     public List<House> getAllHouses() {
 
-        String sql = "SELECT * FROM houses";
+        String sql = "SELECT * FROM HouseTable";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery();) {
             List<House> houseList = new ArrayList<>();
@@ -30,8 +30,8 @@ public class HouseDao {
                         rs.getString("location"),
                         rs.getDouble("market_value"),
                         rs.getDouble("rental_cost"),
-                        rs.getBoolean("availability"),
-                        rs.getDouble("Plot_size")
+                        rs.getBoolean("availablity"),
+                        rs.getDouble("plot_size")
                 );
 
                 houseList.add(house);
@@ -40,16 +40,16 @@ public class HouseDao {
             return houseList;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to load all from house due to ", e);
+            throw new RuntimeException("Failed to load all from house due to ", e);
         }
     }
 
 // saves this House to the database
     public int saveHouse(House house) {
-        String sql = "INSERT INTO houses "
+        String sql = "INSERT INTO HouseTable "
                 + "(propertyID, floor_size, full_address, "
-                + "location, market_value, rental_cost, availability, plot_size) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "location, market_value, rental_cost, availablity, plot_size) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
 
             ps.setInt(1, house.getID());
@@ -64,15 +64,15 @@ public class HouseDao {
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to save house id: " + house.getID() + " due to ", e);
+            throw new RuntimeException("Failed to save house id: " + house.getID() + " due to ", e);
         }
     }
 
 // updates a specific house
     public int updateHouse(House house) {
-        String sql = "UPDATE houses "
+        String sql = "UPDATE HouseTable SET "
                 + "floor_size = ?, full_address = ?, "
-                + "location = ?, market_value = ?, rental_cost = ?, availability = ?, plot_size = ? "
+                + "location = ?, market_value = ?, rental_cost = ?, availablity = ?, plot_size = ? "
                 + "WHERE propertyID = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
@@ -89,13 +89,13 @@ public class HouseDao {
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to update house: " + house.getID() + " due to ", e);
+            throw new RuntimeException("Failed to update house: " + house.getID() + " due to ", e);
         }
     }
 
     //deletes a House
     public int deleteHouse(int id) {
-        String sql = "DELETE FROM houses WHERE propertyID =?";
+        String sql = "DELETE FROM HouseTable WHERE propertyID =?";
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
@@ -103,19 +103,19 @@ public class HouseDao {
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to delete house: " + id + " due to ", e);
+            throw new RuntimeException("Failed to delete house: " + id + " due to ", e);
         }
     }
     
     public House getById(int id){
-        String sql = "SELECT * FROM houses WHERE propertyID = ?";
+        String sql = "SELECT * FROM HouseTable WHERE propertyID = ?";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
             House house = null;
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             
-            while (rs.next()) {
+            if (rs.next()) {
                 
                 house = new House(
                         rs.getInt("propertyID"),
@@ -124,8 +124,8 @@ public class HouseDao {
                         rs.getString("location"),
                         rs.getDouble("market_value"),
                         rs.getDouble("rental_cost"),
-                        rs.getBoolean("availability"),
-                        rs.getDouble("Plot_size")
+                        rs.getBoolean("availablity"),
+                        rs.getDouble("plot_size")
                 );
 
             }
@@ -133,7 +133,7 @@ public class HouseDao {
             return house;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to load all from house due to ", e);
+            throw new RuntimeException("Failed to load all from house due to ", e);
         }
     }
 }

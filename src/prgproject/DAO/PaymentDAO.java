@@ -38,7 +38,7 @@ public class PaymentDAO {
             return paymentList;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to load all payments due to ", e);
+            throw new RuntimeException("Failed to load all payments due to ", e);
         }
         
     }
@@ -62,15 +62,15 @@ public class PaymentDAO {
             
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to save payment: " + payment.getReceipt() + " due to ", e);
+            throw new RuntimeException("Failed to save payment: " + payment.getReceipt() + " due to ", e);
         }
     }
 
 // updates a specific Payment
     public int updatePayment(Payment payment) {
         String sql = "UPDATE payments "
-                + "SET isPartial = ?, amount = ?, "
-                + " payment_date = ?, status = ?, leaseID = ?"
+                + "SET is_partial = ?, amount = ?, "
+                + " payment_date = ?, status = ?, leaseID = ? "
                 + "WHERE receipt = ? ";
 
         try (Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql);) {
@@ -85,7 +85,7 @@ public class PaymentDAO {
             return ps.executeUpdate();
             
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to update payment:" + payment.getReceipt() + " due to ", e);
+            throw new RuntimeException("Failed to update payment:" + payment.getReceipt() + " due to ", e);
         }
     }
 
@@ -99,7 +99,7 @@ public class PaymentDAO {
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to delete payment: " + receipt + " due to ", e);
+            throw new RuntimeException("Failed to delete payment: " + receipt + " due to ", e);
         }
     }
 
