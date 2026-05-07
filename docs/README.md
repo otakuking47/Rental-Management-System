@@ -222,16 +222,15 @@ $CLIENT = "C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe"
 
 If your install already has a different root password, edit the `PASS` constant in [src/prgproject/utils/DBConnection.java](src/prgproject/utils/DBConnection.java) instead.
 
-### 7.5 — Load the schema and seed data
+### 7.5 — (Optional) Load the schema manually
 
-From the repo root:
+**You don't have to do this** — the application will auto-load the schema on first launch (see [§8.3 First-launch bootstrap](#83--first-launch-bootstrap)). This step is only useful if you want to verify the SQL works, or if you want to seed a different MySQL instance from the command line.
 
 ```powershell
 $CLIENT = "C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe"
+& $CLIENT -u root -ptoor -e "CREATE DATABASE IF NOT EXISTS property_management"
 Get-Content schema_dao_aligned.sql -Raw | & $CLIENT -u root -ptoor
 ```
-
-This drops any pre-existing tables, creates the 8 tables (incl. `admin`), and inserts realistic Namibian-flavoured seed data: 5 tenants, 6 properties, 3 active leases, 5 payments, and the `admin / admin` login.
 
 Verify:
 
@@ -281,7 +280,21 @@ The login window appears. Enter:
 
 Press Enter or click **Login**. The dashboard opens with five tabs.
 
-### 8.3 — One-liner alias (optional)
+### 8.3 — First-launch bootstrap
+
+The first time you launch the application against an empty MySQL instance, [DatabaseBootstrap.ensureInitialized()](src/prgproject/utils/DatabaseBootstrap.java) (called from `LoginFrom.main`) will:
+
+1. Connect to `mysql://localhost:3306` and check whether the `property_management` database exists with a populated `admin` table.
+2. If not, `CREATE DATABASE IF NOT EXISTS property_management`, then read [schema_dao_aligned.sql](schema_dao_aligned.sql) (from the working directory or classpath), split it into individual statements, and execute them.
+3. Return silently and let the login window open — no dialog or progress bar.
+
+The whole bootstrap takes well under a second on a local MySQL. On every subsequent launch, it's a sub-50ms no-op — it sees the existing schema and returns immediately. Your data is **never** wiped on restart.
+
+If MySQL isn't running or credentials don't match, you'll see a clear error dialog before the login window appears, with steps to fix it.
+
+You can still seed manually from the command line (§7.5) if you prefer — the bootstrap detects existing data and won't double-run.
+
+### 8.4 — One-liner alias (optional)
 
 Save this in a `run.ps1` at the repo root for quick re-launches:
 

@@ -13,7 +13,7 @@ import java.util.List;
 import prgproject.model.TownHouse;
 import prgproject.utils.DBConnection;
 
-// Loads a TownHouse from the database using its propertyID.
+// Loads a TownHouse from the database using its ID.
 // Returns null if no matching record is found.
 public class TownHouseDao {
 
@@ -76,7 +76,7 @@ public class TownHouseDao {
 // updates a specific Townhouse
     public int updateTownHouse(TownHouse t) {
         String sql = "UPDATE townhouses "
-                + "SET unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
+                + "unit_no = ?, backyard = ?, floor_size = ?, full_address = ?, "
                 + "location = ?, market_value = ?, rental_cost = ?, availability = ? "
                 + "WHERE propertyID = ? ";
 
@@ -95,7 +95,7 @@ public class TownHouseDao {
 
             return ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Faild ro update record propertyID:" + t.getID() + " due to ", e);
+            throw new RuntimeException("Faild ro update record ID:" + t.getID() + " due to ", e);
         }
     }
 
@@ -108,7 +108,7 @@ public class TownHouseDao {
             return ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Faild to delete propertyID: " + id + " due to ", e);
+            throw new RuntimeException("Faild to delete ID: " + id + " due to ", e);
         }
     }
     

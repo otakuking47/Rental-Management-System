@@ -3,6 +3,7 @@ package prgproject.ui;
 import javax.swing.*;
 import java.awt.*;
 import prgproject.DAO.AdminDao;
+import prgproject.utils.DatabaseBootstrap;
 
 /**
  * Login form — UI layer only. On success, opens DashboardForm and disposes this
@@ -104,7 +105,7 @@ public class LoginFrom extends JFrame {
                 return;
             }
 
-            boolean valid = true; //AdminDao.authenticate(username, password);
+            boolean valid = AdminDao.authenticate(username, password);
 
             if (valid) {
                 new DashboardForm().setVisible(true);
@@ -125,6 +126,7 @@ public class LoginFrom extends JFrame {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception ignored) {
         }
+        DatabaseBootstrap.ensureInitialized();
         SwingUtilities.invokeLater(() -> new LoginFrom().setVisible(true));
     }
 }

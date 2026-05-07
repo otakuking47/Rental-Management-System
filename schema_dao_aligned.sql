@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS houses;
 DROP TABLE IF EXISTS townhouses;
 DROP TABLE IF EXISTS property;
 DROP TABLE IF EXISTS tenants;
+DROP TABLE IF EXISTS admin;
 DROP TABLE IF EXISTS PaymentTable;
 DROP TABLE IF EXISTS leaseTable;
 DROP TABLE IF EXISTS ApartmentTable;
@@ -19,6 +20,17 @@ DROP TABLE IF EXISTS HouseTable;
 DROP TABLE IF EXISTS TownHouseTable;
 DROP TABLE IF EXISTS PropertyTable;
 DROP TABLE IF EXISTS TenantTable;
+
+-- ── admin (login credentials) ────────────────────────────────────────────
+CREATE TABLE admin (
+    username     VARCHAR(50)  NOT NULL,
+    passwordHash VARCHAR(64)  NOT NULL,
+    PRIMARY KEY (username)
+);
+
+-- Seeded admin: username "admin", password "admin" (SHA-256)
+INSERT INTO admin (username, passwordHash) VALUES
+    ('admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918');
 
 -- ── tenants ──────────────────────────────────────────────────────────────
 CREATE TABLE tenants (
