@@ -4,15 +4,23 @@
  */
 package prgproject.Reports;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 /**
- *
- * @author Collin
+ * Excel Exporter (uses CSV format - Excel can open it)
  */
-public class ExcelExporter implements ReportExporter{
+public class ExcelExporter implements ReportExporter {
 
     @Override
     public void export(String data) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String fileName = "Rental_Status_Report.xls";
+
+        try (FileWriter writer = new FileWriter(fileName)) {
+            writer.write(data);
+            System.out.println("✅ Report exported successfully to: " + fileName);
+        } catch (IOException e) {
+            System.err.println("❌ Failed to export Excel: " + e.getMessage());
+        }
     }
-    
 }
