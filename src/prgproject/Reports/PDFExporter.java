@@ -21,9 +21,9 @@ public class PDFExporter implements ReportExporter {
             writer.write(data);
             writer.write("\n\n=================== END OF REPORT ===================");
             
-            System.out.println("✅ Report exported successfully to: " + fileName);
+            System.out.println(" Report exported successfully to: " + fileName);
         } catch (IOException e) {
-            System.err.println("❌ Failed to export PDF: " + e.getMessage());
+            System.err.println(" Failed to export PDF: " + e.getMessage());
         }
     }
 }
